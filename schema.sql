@@ -57,26 +57,21 @@ CREATE TABLE ride(
 );
 
 
+CREATE TABLE authorizations(
+    driverId integer REFERENCES driver(id),
+    vehicleId integer REFERENCES vehicle(id)
+);
 
-INSERT INTO driver (firstName, lastName, phone, licenseNumber)
-VALUES ('Fred', 'Ziffle', '985-673-6738', 'asdfjkl;123');
+create table drivers
+(
+    driverid integer not null constraint drivers_driver_id_fk references driver,
+    rideid   integer not null constraint drivers_ride_id_fk references ride,
+    constraint drivers_pk primary key (driverid, rideid)
+);
 
-INSERT INTO passenger(firstName, lastName, phone)
-VALUES ('Bob','Brown', '890-234-1789');
-
-INSERT INTO state(abbreviation, name) VALUES ('IN','Indiana');
-
-INSERT INTO vehicleType(type) VALUES ('car');
-
-INSERT INTO vehicle(make, model, color, vehicleTypeId, capacity, mpg, licenseState, licenseNumber)
-VALUES ('Honda', 'CR-V', 'blue',1, 5, 30, 'OH', '3A78h23');
-
-INSERT INTO location (name, address, city, state, zipCode)
-VALUES ('Taylor University', '236 W Reade Ave', 'Upland', 'IN', '46989');
-
-INSERT INTO location (name, address, city, state, zipCode)
-VALUES ('Indianapolis Airport', '7800 Col. H. Weir Cook Memorial Dr', 'Indianapolis', 'IN', '46241');
-
-INSERT INTO ride (date, time, distance, fuelPrice, fee, vehicleId, fromLocationId, toLocationId)
-VALUES ('2020-12-13', '05:00', 90.7, 10, 12.00, 1, 2, 4);
+CREATE TABLE passengers(
+    passengerid integer not null REFERENCES passenger(id),
+    rideid integer not null references ride(id),
+    constraint passengers_pk primary key (passengerid, rideid)
+);
 
