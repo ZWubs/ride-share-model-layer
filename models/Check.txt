@@ -1,0 +1,14 @@
+
+~ Authorizations: Driver <-> Vehicle
+
+~ Drivers: Driver <-> Ride
+
+~ Passengers: Passenger <-> Ride
+
+~ Vehicle <-> Vehicle Type
+
+~ Vehicle <-> Ride
+
+~ Ride <-> Location
+
+~ Location <-> State

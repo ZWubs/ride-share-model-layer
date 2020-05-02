@@ -9,7 +9,7 @@ class Vehicle extends Model {
 	static get relationMappings() {
 		return {
 
-			authorization: {
+			authorizations: {
 
 				relation: Model.ManyToManyRelation,
 
@@ -17,8 +17,8 @@ class Vehicle extends Model {
 				join: {
 					from: 'driver.id',
 					through: {
-						from: 'authorization.driverId',
-						to: 'authorization.vehicleId'
+						from: 'authorizations.driverid',
+						to: 'authorizations.vehicleid'
 					},
 					to: 'vehicle.id'
 				}
@@ -31,11 +31,23 @@ class Vehicle extends Model {
 
 				modelClass: __dirname + "/Ride",
 				join: {
-					from: 'ride.id',
-					to: 'vehicle.id'
+					from: 'vehicle.id',
+					to: 'ride.vehicleid'
 				}
 
-			}
+			},
+
+			vehicleType: {
+
+				relation: Model.HasOneRelation,
+
+				modelClass: __dirname + "/VehicleType",
+				join: {
+					from: 'vehicletype.id',
+					to: 'vehicle.vehicletypeid',
+				}
+
+			},
 
 		}
 	}

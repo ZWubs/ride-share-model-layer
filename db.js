@@ -15,8 +15,10 @@ Model.knex( knex );
 
 const Driver = require("./models/Driver.js");
 const Vehicle = require("./models/Vehicle.js");
+const VehicleType = require("./models/VehicleType.js")
 const Ride = require("./models/Ride.js");
 const Location = require("./models/Location.js");
+const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
 
 // Configure Hapi.
@@ -47,11 +49,9 @@ const init = async () => {
 			method: "GET",
 			path: "/",
 			handler: function( request, h ) {
-				return Driver.query().withGraphFetched('authorization');
+				return Location.query().withGraphFetched('locationState');
 			}
 		}
-
-		//...
 	]);
 
 	console.log("Server listening on", server.info.uri);

@@ -15,15 +15,29 @@ class Ride extends Model {
 
 				modelClass: __dirname + "/Driver",
 				join: {
-					from: 'driver.id',
+					from: 'ride.id',
 					through: {
-						from: 'drivers.driverId',
-						to: 'drivers.rideId'
+						from: 'drivers.rideid',
+						to: 'drivers.driverid'
 					},
-					to: 'ride.id'
+					to: 'driver.id'
 				}
 
 			},
+
+			/*
+			relation: Model.ManyToManyRelation,
+
+			modelClass: __dirname + "/Driver",
+			join: {
+				from: 'driver.id',
+				through: {
+					from: 'authorizations.driverid',
+					to: 'authorizations.vehicleid'
+				},
+				to: 'vehicle.id'
+			}
+			*/
 
 			vehicle: {
 
@@ -32,7 +46,7 @@ class Ride extends Model {
 				modelClass: __dirname + "/Vehicle",
 				join: {
 					from: 'vehicle.id',
-					to: 'ride.id'
+					to: 'ride.vehicleid'
 				}
 
 			},
@@ -43,12 +57,12 @@ class Ride extends Model {
 
 				modelClass: __dirname + "/Passenger",
 				join: {
-					from: 'passenger.id',
+					from: 'ride.id',
 					through: {
-						from: 'passengers.passengerId',
-						to: 'passengers.rideId'
+						from: 'passengers.rideid',
+						to: 'passengers.passengerid'
 					},
-					to: 'ride.id'
+					to: 'passenger.id'
 				}
 
 			},
@@ -60,7 +74,7 @@ class Ride extends Model {
 				modelClass: __dirname + "/Location",
 				join: {
 					from: 'location.id',
-					to: 'ride.fromLocationId'
+					to: 'ride.fromlocationid'
 				}
 
 			},
@@ -72,7 +86,7 @@ class Ride extends Model {
 				modelClass: __dirname + "/Location",
 				join: {
 					from: 'location.id',
-					to: 'ride.toLocationId'
+					to: 'ride.tolocationid'
 				}
 
 			},

@@ -16,9 +16,8 @@ class Location extends Model {
 				modelClass: __dirname + "/Ride",
 				join: {
 					from: 'location.id',
-					to: 'ride.fromLocationId',
+					to:	'ride.fromlocationid'
 				}
-
 			},
 
 			toLocation: {
@@ -28,11 +27,21 @@ class Location extends Model {
 				modelClass: __dirname + "/Ride",
 				join: {
 					from: 'location.id',
-					to: 'ride.toLocationId'
+					to: 'ride.tolocationid'
+				}
+			},
+
+			locationState: {
+
+				relation: Model.BelongsToOneRelation,
+
+				modelClass: __dirname + "/State",
+				join: {
+					from: 'state.abbreviation',
+					to: 'location.state'
 				}
 
-			}
-
+			},
 		}
 	}
 }
