@@ -2,6 +2,7 @@
   "name": "ride-share-model-layer",
   "version": "1.0.0",
   "main": "index.js",
+  "private": true,
   "repository": "https://github.com/ZWubs/ride-share-model-layer.git",
   "author": "rteal <rteal>",
   "license": "MIT",
