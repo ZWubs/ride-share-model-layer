@@ -23,6 +23,7 @@ const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
 
 // Configure Hapi.
+const Joi = require("@hapi/joi"); // Input validation
 const Hapi = require("@hapi/hapi");
 
 const init = async () => {
@@ -67,12 +68,38 @@ const init = async () => {
 					}),
 				},
 			},
-			handler: function (request, h) {
-				return "hello world";
+			handler: async (request, h) => {
+				const driver_id= await Driver.query()
+					.where({
+						firstname: request.payload.firstName,
+						lastname: request.payload.lastName
+					})
+					.select('id')
+					.first()
+
+				const vehicle_id = await Vehicle.query()
+					.where('licensenumber', request.payload.licensePlate)
+					.select('id')
+					.first()
+
+				const newAuth = await Authorization.query().insert({
+					driverid: driver_id,
+					vehicleid: vehicle_id
+				});
+
+				if(newAuth){
+					return{
+						ok: true,
+						msge: `${request.payload.firstname} ${request.payload.lastname} is now authorized to drive the vehicle with a license plate of ${request.payload.licenseplate}.`
+					}
+				} else {
+					return{
+						ok: false,
+						msge: `Authorization failed.`
+					};
+				}
 			}
 		}
-
-
 	]);
 
 	console.log("Server listening on", server.info.uri);

@@ -35,7 +35,7 @@
         </div>
 
         <div class="text-xs-center">
-            <v-dialog v-model="dialogVisible" width="500">
+            <v-dialog v-model='dialogVisible' width="500">
                 <v-card>
                     <v-card-title primary-title>
                         {{ dialogHeader }}
@@ -72,6 +72,10 @@
 
                 driverAuthorized:false,
 
+                dialogHeader: "<no dialogHeader>",
+                dialogText: "<no dialogText>",
+                dialogVisible: false,
+
                 rules: {
                     required: [(val) => val.length > 0 || "Required"]
                 },
@@ -83,19 +87,20 @@
 
                 this.$axios
                     .post("/authorization",{
-                        driverFirstName:this.new_auth.driverFirstName,
-                        driverLastName:this.new_auth.driverLastName,
+                        firstName:this.new_auth.driverFirstName,
+                        lastName:this.new_auth.driverLastName,
                         licensePlate:this.new_auth.licensePlate
                     })
-                    .then((result => {
+                    .then((result) => {
                         if (result.data.ok){
                             this.showDialog("Success", result.data.msge)
                             this.driverAuthorized = true;
                         } else {
                             this.showDialog("Sorry", result.data.msge);
                         }
-                    }))
+                    })
                     .catch((err) => this.showDialog("Failed", err));
+
             },
 
             // Helper method to display the dialog box with the appropriate content.
@@ -112,7 +117,7 @@
             hideDialog: function () {
                 this.dialogVisible = false;
                 if (this.driverAuthorized) {
-                    // Only navigate away from the reset password page if we were successful.
+                    // Only navigate away from the Authorization page if we were successful.
                     this.$router.push({ name: "home-page" });
                 }
             },
