@@ -102,18 +102,22 @@ async function init() {
 			  },
 			},
 			handler: async (request, h) => {
+
+              let licensestate = await State.query().select('abbreviation').where('name', '=', request.payload.licensestate);
+              let vehicletypeid = await VehicleType.query().select('id').where('type', '=', request.payload.type);
+
 			  const newVehicle = await Vehicle.query().insert({
 				make: request.payload.make,
 				model: request.payload.model,
 				color: request.payload.color,
-				type: request.payload.type,
+				vehicletypeid: vehicletypeid[0].id,
 				capacity: request.payload.capacity,
 				mpg: request.payload.mpg,
-				licensestate: await State.query().select('id').where('licensestate', '=', request.payload.licensestate),
+				licensestate: licensestate[0].abbreviation,
 				licensenumber: request.payload.licensenumber
   	          });
 
-  	          if (newAccount) {
+  	          if (newVehicle) {
   	            return {
   	              ok: true,
   	              msge: `Created vehicle`,
@@ -140,8 +144,9 @@ async function init() {
 			  },
 			},
 			handler: async (request, h) => {
-			  const newVehicleType = await Vehicle.query().insert({
-				type: request.payload.make
+				console.log( request.payload.type )
+			  const newVehicleType = await VehicleType.query().insert({
+				type: request.payload.type
   	          });
 
   	          if (newVehicleType) {

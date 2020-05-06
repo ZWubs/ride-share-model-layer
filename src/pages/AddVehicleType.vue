@@ -88,7 +88,7 @@ export default {
       this.vehicleTypeCreated = false;
 
       // Post the content of the form to the Hapi server.
-      this.$axios.patch("/add-vehicle-type", {
+      this.$axios.post("/add-vehicle-type", {
           type: this.newVehicleType.type,
       })
       .then((result) => {

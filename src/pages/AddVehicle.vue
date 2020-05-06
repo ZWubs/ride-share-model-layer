@@ -171,7 +171,7 @@ export default {
       this.vehicleCreated = false;
 
       // Post the content of the form to the Hapi server.
-      this.$axios.patch("/add-vehicle", {
+      this.$axios.post("/add-vehicle", {
           make: this.newVehicle.make,
           model: this.newVehicle.model,
           color: this.newVehicle.color,
@@ -185,10 +185,10 @@ export default {
         // Based on whether things worked or not, show the
         // appropriate dialog.
         if (result.data.ok) {
-        this.showDialog("Success", result.data.msge);
+          this.showDialog("Success", result.data.msge);
         this.accountCreated = true;
         } else {
-        this.showDialog("Sorry", result.data.msge);
+          this.showDialog("Sorry", result.data.msge);
         }
       })
       .catch((err) => this.showDialog("Failed", err));
