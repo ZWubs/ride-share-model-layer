@@ -13,6 +13,7 @@ const knex = require("knex")({
 const { Model } = require("objection");
 Model.knex( knex );
 
+//Import Models
 const Driver = require("./models/Driver.js");
 const Vehicle = require("./models/Vehicle.js");
 const VehicleType = require("./models/VehicleType.js")
