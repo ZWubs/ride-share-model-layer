@@ -23,13 +23,18 @@ const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
 
 // Configure Hapi.
+const Joi = require("@hapi/joi"); // Input validation
 const Hapi = require("@hapi/hapi");
 
-const init = async () => {
-	const server = Hapi.server({
-		host: "localhost",
-		port: 3000
-	})
+const server = Hapi.server({
+  host: "localhost",
+  port: 3000,
+  routes: {
+    cors: true,
+  },
+});
+
+async function init() {
 
 	// Output endpoints at startup.
 	await server.register({
@@ -45,19 +50,29 @@ const init = async () => {
 		}
 	});
 
+	/**
+	 *	Handle creating a new vehicle
+	 */
 	server.route([
 		{
 			method: "GET",
 			path: "/",
 			handler: function( request, h ) {
-				return Location.query().withGraphFetched('locationState');
+				return Vehicle.query().withGraphFetched("vehicleLicenseState");
 			}
 		}
 	]);
+
+	
 
 	console.log("Server listening on", server.info.uri);
 	await server.start();
 
 };
+
+process.on("unhandledRejection", (err) => {
+  console.log( err );
+  process.exit(1);
+});
 
 init();

@@ -13,7 +13,7 @@ class State extends Model {
 	static get relationMappings() {
 		return {
 
-			location: {
+			locations: {
 
 				relation: Model.HasManyRelation,
 
@@ -23,6 +23,18 @@ class State extends Model {
 					to:	'location.state'
 				}
 			},
+
+			vehicles: {
+
+				relation: Model.HasManyRelation,
+
+				modelClass: __dirname + "/Vehicle",
+				join: {
+					from: 'state.abbreviation',
+					to:	'vehicle.licensestate'
+				}
+
+			}
 		}
 	}
 }

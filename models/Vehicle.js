@@ -49,6 +49,18 @@ class Vehicle extends Model {
 
 			},
 
+			vehicleLicenseState: {
+
+				relation: Model.HasOneRelation,
+
+				modelClass: __dirname + "/State",
+				join: {
+					from: 'state.abbreviation',
+					to: 'vehicle.licensestate',
+				}
+
+			}
+
 		}
 	}
 }
