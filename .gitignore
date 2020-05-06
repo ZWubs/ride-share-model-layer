@@ -1,1 +1,4 @@
 node_modules/
+package-lock.json
+ride-share-model-layer.zip
+yarn-error.log
