@@ -52,7 +52,27 @@ const init = async () => {
 			handler: function( request, h ) {
 				return Location.query().withGraphFetched('locationState');
 			}
+		},
+		{
+			//A5: Authorize a driver to a vehicle
+			method: "POST",
+			path: "/authorization",
+			config: {
+				description: "Authorize a driver to a Vehicle",
+				validate: {
+					payload: Joi.object({
+						firstName: Joi.string().required(),
+						lastName: Joi.string().required(),
+						licensePlate: Joi.string().required(),
+					}),
+				},
+			},
+			handler: function (request, h) {
+				return "hello world";
+			}
 		}
+
+
 	]);
 
 	console.log("Server listening on", server.info.uri);

@@ -1,7 +1,12 @@
 <template>
   <v-container>
+    <v-app-bar>
+      <v-btn v-bind:to="{name: 'authorization-page'}">
+        Authorize
+      </v-btn>
+    </v-app-bar>
     <div>
-      <h4 class="display-1">Welcome, Single-Page App User</h4>
+      <h4 class="display-1">Let us help you find a ride!</h4>
 
       <p class="body-1">This is our award-winning home page.</p>
     </div>
