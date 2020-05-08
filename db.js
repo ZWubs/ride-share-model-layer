@@ -21,6 +21,7 @@ const Ride = require("./models/Ride.js");
 const Location = require("./models/Location.js");
 const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
+const Authorization = require("./models/Authorization");
 
 // Configure Hapi.
 const Joi = require("@hapi/joi"); // Input validation
@@ -35,7 +36,6 @@ const server = Hapi.server({
 });
 
 async function init() {
-
 	// Output endpoints at startup.
 	await server.register(require("blipp"));
 
@@ -147,7 +147,7 @@ async function init() {
 				console.log( request.payload.type )
 			  const newVehicleType = await VehicleType.query().insert({
 				type: request.payload.type
-  	          });
+  	          	  });
 
   	          if (newVehicleType) {
   	            return {
@@ -161,6 +161,54 @@ async function init() {
   	            };
   	          }
 			},
+		},
+		{
+			//A5: Authorize a driver to a vehicle
+			method: "POST",
+			path: "/authorization",
+			config: {
+				description: "Authorize a driver to a Vehicle",
+				validate: {
+					payload: Joi.object({
+						firstName: Joi.string().required(),
+						lastName: Joi.string().required(),
+						licensePlate: Joi.string().required(),
+					}),
+				},
+			},
+			handler: async (request, h) => {
+				const driver= await Driver.query()
+					.where({
+						firstname: request.payload.firstName,
+						lastname: request.payload.lastName
+					})
+					.select('id')
+					.first()
+				console.log(driver.id);
+				const vehicle = await Vehicle.query()
+					.where('licensenumber', request.payload.licensePlate)
+					.select('id')
+					.first()
+				console.log(vehicle.id);
+
+				const newAuth = await Authorization.query().insert({
+					driverid: driver.id,
+					vehicleid: vehicle.id
+				});
+				console.log('d');
+
+				if(newAuth){
+					return{
+						ok: true,
+						msge: `${request.payload.firstName} ${request.payload.lastName} is now authorized to drive the vehicle with a license plate of ${request.payload.licensePlate}.`
+					}
+				} else {
+					return{
+						ok: false,
+						msge: `Authorization failed.`
+					};
+				}
+			}
 		}
 	]);
 
