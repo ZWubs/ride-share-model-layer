@@ -150,14 +150,14 @@ export default {
 
   mounted: function() {
     //
-    this.$axios.get("/list-vehicle-types").then(response => {
+    this.$axios.get("/vehicle-types").then(response => {
         this.vehicleTypeList = response.data.map( function (obj) {
           return obj.type.charAt(0).toUpperCase() + obj.type.slice(1);
         });
     });
 
     //
-    this.$axios.get("/list-states").then(response => {
+    this.$axios.get("/states").then(response => {
         this.statesList = response.data.map( function (obj) {
           return obj.name;
         });
@@ -171,7 +171,7 @@ export default {
       this.vehicleCreated = false;
 
       // Post the content of the form to the Hapi server.
-      this.$axios.post("/add-vehicle", {
+      this.$axios.post("/vehicle", {
           make: this.newVehicle.make,
           model: this.newVehicle.model,
           color: this.newVehicle.color,

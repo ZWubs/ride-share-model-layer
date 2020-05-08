@@ -62,7 +62,7 @@ async function init() {
 		//
 		{
 			method: "GET",
-	        path: "/list-vehicle-types",
+	        path: "/vehicle-types",
 	        config: {
 	          description: "Retrieve all vehicle types",
 	        },
@@ -74,7 +74,7 @@ async function init() {
 		//
 		{
 			method: "GET",
-	        path: "/list-states",
+	        path: "/states",
 	        config: {
 	          description: "Retrieve all states",
 	        },
@@ -85,7 +85,7 @@ async function init() {
 
 		{
 			method: "POST",
-			path: "/add-vehicle",
+			path: "/vehicle",
 			config: {
 			  description: "Add a new vehicle",
 			  validate: {
@@ -134,7 +134,7 @@ async function init() {
 		//
 		{
 			method: "POST",
-			path: "/add-vehicle-type",
+			path: "/vehicle-type",
 			config: {
 			  description: "Add a new vehicle type",
 			  validate: {
