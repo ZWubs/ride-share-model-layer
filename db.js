@@ -21,6 +21,7 @@ const Ride = require("./models/Ride.js");
 const Location = require("./models/Location.js");
 const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
+const Authorization = require("./models/Authorization");
 
 // Configure Hapi.
 const Joi = require("@hapi/joi"); // Input validation
@@ -72,28 +73,30 @@ const init = async () => {
 				},
 			},
 			handler: async (request, h) => {
-				const driver_id= await Driver.query()
+				const driver= await Driver.query()
 					.where({
 						firstname: request.payload.firstName,
 						lastname: request.payload.lastName
 					})
 					.select('id')
 					.first()
-
-				const vehicle_id = await Vehicle.query()
+				console.log(driver.id);
+				const vehicle = await Vehicle.query()
 					.where('licensenumber', request.payload.licensePlate)
 					.select('id')
 					.first()
+				console.log(vehicle.id);
 
 				const newAuth = await Authorization.query().insert({
-					driverid: driver_id,
-					vehicleid: vehicle_id
+					driverid: driver.id,
+					vehicleid: vehicle.id
 				});
+				console.log('d');
 
 				if(newAuth){
 					return{
 						ok: true,
-						msge: `${request.payload.firstname} ${request.payload.lastname} is now authorized to drive the vehicle with a license plate of ${request.payload.licenseplate}.`
+						msge: `${request.payload.firstName} ${request.payload.lastName} is now authorized to drive the vehicle with a license plate of ${request.payload.licensePlate}.`
 					}
 				} else {
 					return{
