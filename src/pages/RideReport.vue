@@ -1,10 +1,12 @@
 <template>
     <v-container>
-        <v-data-table-header
-        ></v-data-table-header>
+        <h2>
+            Rides
+        </h2>
+        <instructions details="View upcoming rides here."></instructions>
         <v-data-table
             :headers="headers"
-            :items="desserts"
+            :items="rides"
             :items-per-page="5"
             class="elevation-1"
         ></v-data-table>
@@ -12,104 +14,38 @@
 </template>
 
 <script>
+    import Instructions from "../components/Instructions";
     export default {
+        components: {Instructions},
         data () {
             return {
                 headers: [
                     {
-                        text: 'From',
+                        text: 'Date',
                         align: 'start',
                         sortable: false,
-                        value: 'name',
+                        value: 'date',
                     },
-                    { text: 'To', value: 'calories' },
-                    { text: 'Driver', value: 'fat' },
-                    { text: 'Passengers', value: 'carbs' },
-                    { text: 'Fee', value: 'protein' },
+                    { text: 'Time', value: 'time' },
+                    { text: 'To', value: 'tolocationid' },
+                    { text: 'From', value: 'fromlocationid' },
+                    { text: 'Fee', value: 'fee' },
+                    { text: 'Distance', value: 'distance' },
+                    { text: 'Drivers', value: 'drivers' },
+                    { text: 'Passengers', value: 'passengers' },
                 ],
-                desserts: [
-                    {
-                        name: 'Frozen Yogurt',
-                        calories: 159,
-                        fat: 6.0,
-                        carbs: 24,
-                        protein: 4.0,
-                        iron: '1%',
-                    },
-                    {
-                        name: 'Ice cream sandwich',
-                        calories: 237,
-                        fat: 9.0,
-                        carbs: 37,
-                        protein: 4.3,
-                        iron: '1%',
-                    },
-                    {
-                        name: 'Eclair',
-                        calories: 262,
-                        fat: 16.0,
-                        carbs: 23,
-                        protein: 6.0,
-                        iron: '7%',
-                    },
-                    {
-                        name: 'Cupcake',
-                        calories: 305,
-                        fat: 3.7,
-                        carbs: 67,
-                        protein: 4.3,
-                        iron: '8%',
-                    },
-                    {
-                        name: 'Gingerbread',
-                        calories: 356,
-                        fat: 16.0,
-                        carbs: 49,
-                        protein: 3.9,
-                        iron: '16%',
-                    },
-                    {
-                        name: 'Jelly bean',
-                        calories: 375,
-                        fat: 0.0,
-                        carbs: 94,
-                        protein: 0.0,
-                        iron: '0%',
-                    },
-                    {
-                        name: 'Lollipop',
-                        calories: 392,
-                        fat: 0.2,
-                        carbs: 98,
-                        protein: 0,
-                        iron: '2%',
-                    },
-                    {
-                        name: 'Honeycomb',
-                        calories: 408,
-                        fat: 3.2,
-                        carbs: 87,
-                        protein: 6.5,
-                        iron: '45%',
-                    },
-                    {
-                        name: 'Donut',
-                        calories: 452,
-                        fat: 25.0,
-                        carbs: 51,
-                        protein: 4.9,
-                        iron: '22%',
-                    },
-                    {
-                        name: 'KitKat',
-                        calories: 518,
-                        fat: 26.0,
-                        carbs: 65,
-                        protein: 7,
-                        iron: '6%',
-                    },
-                ],
+                rides: [],
             }
+        },
+        mounted: async function() {
+            console.log("about to GET");
+            let data;
+            data = await this.$axios.get("/rides");
+            console.log(`GET  happened ${data}`);
+            this.rides = data.map( (obj) => {
+                console.log(obj.date.parse());
+                return obj;
+            });
         },
     }
 </script>

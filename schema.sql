@@ -46,7 +46,7 @@ CREATE TABLE location(
 
 CREATE TABLE ride(
     id serial not null constraint ride_pk primary key,
-    date date not null,
+    date varchar not null,
     time time not null,
     distance float not null,
     fuelPrice float not null,

@@ -58,6 +58,17 @@ async function init() {
 				return Vehicle.query().withGraphFetched("vehicleLicenseState");
 			}
 		},
+		{
+			//Returns an array of all Rides
+			method: "GET",
+			path: "/rides",
+			config: {
+				description: "Retrieve all Rides",
+			},
+			handler: function (request, h) {
+				return Ride.query();
+			}
+		},
 
 		//
 		{
