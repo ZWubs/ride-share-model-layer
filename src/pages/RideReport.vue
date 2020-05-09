@@ -39,10 +39,10 @@
         },
         mounted: async function() {
             console.log("about to GET");
-            let data;
-            data = await this.$axios.get("/rides");
-            console.log(`GET  happened ${data}`);
-            this.rides = data.map( (obj) => {
+            let response;
+            response = await this.$axios.get("/rides");
+            console.log(`GET  happened ${response}`);
+            this.rides = response.data.map( (obj) => {
                 console.log(obj.date.parse());
                 return obj;
             });
