@@ -27,20 +27,17 @@ const Authorization = require("./models/Authorization");
 const Joi = require("@hapi/joi"); // Input validation
 const Hapi = require("@hapi/hapi");
 
-const init = async () => {
-	const server = Hapi.server({
-		host: "localhost",
-		port: 3000,
-		routes: {
-			cors: true
-		}
-	})
+const server = Hapi.server({
+  port: 3000,
+  host: "localhost",
+  routes: {
+    cors: true,
+  },
+});
 
+async function init() {
 	// Output endpoints at startup.
-	await server.register({
-		plugin: require("blipp"),
-		options: { showAuth: true }
-	})
+	await server.register(require("blipp"));
 
 	// Log stuff.
 	await server.register({
@@ -50,13 +47,120 @@ const init = async () => {
 		}
 	});
 
+	/**
+	 *	Handle creating a new vehicle
+	 */
 	server.route([
 		{
 			method: "GET",
 			path: "/",
 			handler: function( request, h ) {
-				return Location.query().withGraphFetched('locationState');
+				return Vehicle.query().withGraphFetched("vehicleLicenseState");
 			}
+		},
+
+		//
+		{
+			method: "GET",
+	        path: "/list-vehicle-types",
+	        config: {
+	          description: "Retrieve all vehicle types",
+	        },
+	        handler: (request, h) => {
+	          return VehicleType.query().select("type");
+	        }
+		},
+
+		//
+		{
+			method: "GET",
+	        path: "/list-states",
+	        config: {
+	          description: "Retrieve all states",
+	        },
+	        handler: (request, h) => {
+	          return State.query().select("name");
+	        }
+		},
+
+		{
+			method: "POST",
+			path: "/add-vehicle",
+			config: {
+			  description: "Add a new vehicle",
+			  validate: {
+				payload: Joi.object({
+				  make: Joi.string().required(),
+				  model: Joi.string().required(),
+				  color: Joi.string().required(),
+				  type: Joi.string().required(),
+				  capacity: Joi.number().integer().required(),
+				  mpg: Joi.number().required(),
+				  licensestate: Joi.string().required(),
+				  licensenumber: Joi.string().required()
+				}),
+			  },
+			},
+			handler: async (request, h) => {
+
+              let licensestate = await State.query().select('abbreviation').where('name', '=', request.payload.licensestate);
+              let vehicletypeid = await VehicleType.query().select('id').where('type', '=', request.payload.type);
+
+			  const newVehicle = await Vehicle.query().insert({
+				make: request.payload.make,
+				model: request.payload.model,
+				color: request.payload.color,
+				vehicletypeid: vehicletypeid[0].id,
+				capacity: request.payload.capacity,
+				mpg: request.payload.mpg,
+				licensestate: licensestate[0].abbreviation,
+				licensenumber: request.payload.licensenumber
+  	          });
+
+  	          if (newVehicle) {
+  	            return {
+  	              ok: true,
+  	              msge: `Created vehicle`,
+  	            };
+  	          } else {
+  	            return {
+  	              ok: false,
+  	              msge: `Couldn"t create vehicle`,
+  	            };
+  	          }
+			},
+		},
+
+		//
+		{
+			method: "POST",
+			path: "/add-vehicle-type",
+			config: {
+			  description: "Add a new vehicle type",
+			  validate: {
+				payload: Joi.object({
+				  type: Joi.string().required()
+				}),
+			  },
+			},
+			handler: async (request, h) => {
+				console.log( request.payload.type )
+			  const newVehicleType = await VehicleType.query().insert({
+				type: request.payload.type
+  	          	  });
+
+  	          if (newVehicleType) {
+  	            return {
+  	              ok: true,
+  	              msge: `Created vehicle type`,
+  	            };
+  	          } else {
+  	            return {
+  	              ok: false,
+  	              msge: `Couldn"t create vehicle type "${request.payload.type}"`,
+  	            };
+  	          }
+			},
 		},
 		{
 			//A5: Authorize a driver to a vehicle
@@ -112,5 +216,10 @@ const init = async () => {
 	await server.start();
 
 };
+
+process.on("unhandledRejection", (err) => {
+  console.log( err );
+  process.exit(1);
+});
 
 init();
