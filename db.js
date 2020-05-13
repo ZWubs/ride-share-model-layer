@@ -22,6 +22,8 @@ const Location = require("./models/Location.js");
 const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
 const Authorization = require("./models/Authorization");
+const Administrator = require("./models/Administrator");
+const Accounts = require("./models/Accounts");
 
 // Configure Hapi.
 const Joi = require("@hapi/joi"); // Input validation
@@ -80,6 +82,39 @@ async function init() {
 	        },
 	        handler: (request, h) => {
 	          return State.query().select("name");
+	        }
+		},
+
+		{
+			method: "GET",
+	        path: "/passengers",
+	        config: {
+	          description: "Retrieve all passengers",
+	        },
+	        handler: (request, h) => {
+	          return Passenger.query();
+	        }
+		},
+
+		{
+			method: "GET",
+	        path: "/drivers",
+	        config: {
+	          description: "Retrieve all drivers",
+	        },
+	        handler: (request, h) => {
+	          return Driver.query();
+	        }
+		},
+
+		{
+			method: "GET",
+	        path: "/administrators",
+	        config: {
+	          description: "Retrieve all administrators",
+	        },
+	        handler: (request, h) => {
+	          return Administrator.query();
 	        }
 		},
 
@@ -209,7 +244,92 @@ async function init() {
 					};
 				}
 			}
+		},
+
+		/**
+		 *	Create a passenger account
+		 */
+		{
+			method: "POST",
+			path: "/passenger",
+			config: {
+			  description: "Add a new passenger account",
+			  validate: {
+				payload: Joi.object({
+				  firstname: Joi.string().required(),
+				  lastname: Joi.string().required(),
+				  phone: Joi.string().required(),
+				}),
+			  },
+			},
+			handler: async (request, h) => {
+
+              let account = await Accounts.query().insert({});
+			  let accountID = account.id;
+			  const newPassenger = await Passenger.query().insert({
+				firstname: request.payload.firstname,
+				lastname: request.payload.lastname,
+				phone: request.payload.phone,
+				accountid: accountID
+  	          });
+
+  	          if ( newPassenger ) {
+  	            return {
+  	              ok: true,
+  	              msge: `Successfully created a new passenger account with id: '${accountID}'`,
+  	            };
+  	          } else {
+  	            return {
+  	              ok: false,
+  	              msge: `Couldn"t create a  new passenger account`,
+  	            };
+  	          }
+			},
+		},
+
+		/**
+		 *	Create a driver account
+		 */
+		{
+			method: "POST",
+			path: "/driver",
+			config: {
+			  description: "Add a new driver account",
+			  validate: {
+				payload: Joi.object({
+				  firstname: Joi.string().required(),
+				  lastname: Joi.string().required(),
+				  phone: Joi.string().required(),
+				  licensenumber: Joi.string().required()
+				}),
+			  },
+			},
+			handler: async (request, h) => {
+
+              let account = await Accounts.query().insert({});
+			  let accountID = account.id;
+			  const newDriver = await Driver.query().insert({
+				firstname: request.payload.firstname,
+				lastname: request.payload.lastname,
+				phone: request.payload.phone,
+				licensenumber: request.payload.licensenumber,
+				accountid: accountID
+  	          });
+
+  	          if ( newDriver ) {
+  	            return {
+  	              ok: true,
+  	              msge: `Successfully created a new driver account with id: '${accountID}'`,
+  	            };
+  	          } else {
+  	            return {
+  	              ok: false,
+  	              msge: `Couldn"t create a new driver account`,
+  	            };
+  	          }
+			},
 		}
+
 	]);
 
 	console.log("Server listening on", server.info.uri);

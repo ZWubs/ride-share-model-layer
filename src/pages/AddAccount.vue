@@ -1,9 +1,9 @@
 <template>
   <v-container>
     <div>
-      <h4 class="display-1">Add A Vehicle</h4>
+      <h4 class="display-1">Add An Account</h4>
 
-      <instructions details="Register a vehicle here." />
+      <instructions details="Register a new account here." />
 
       <v-form v-model="valid">
         <v-text-field
@@ -186,7 +186,7 @@ export default {
         // appropriate dialog.
         if (result.data.ok) {
           this.showDialog("Success", result.data.msge);
-          this.vehicleCreated = true;
+        this.accountCreated = true;
         } else {
           this.showDialog("Sorry", result.data.msge);
         }
@@ -206,7 +206,7 @@ export default {
     // and navigate to the home page.
     hideDialog: function () {
       this.dialogVisible = false;
-      if (this.vehicleCreated) {
+      if (this.accountCreated) {
         // Only navigate away from the sign-up page if we were successful.
         this.$router.push({ name: "home-page" });
       }
