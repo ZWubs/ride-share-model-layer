@@ -14,71 +14,64 @@
 </template>
 
 <script>
-import Instructions from "../components/Instructions";
-export default {
-  name: "RideReport",
-  components: { Instructions },
-  data() {
-    return {
-      headers: [
-        {
-          text: "Date",
-          align: "start",
-          sortable: false,
-          value: "date",
+    import Instructions from "../components/Instructions";
+    export default {
+          name: "RideReport",
+          components: { Instructions },
+          data() {
+            return {
+              headers: [
+                {
+                  text: "Date",
+                  align: "start",
+                  sortable: true,
+                  value: "date",
+                },
+              { text: "Time", value: "time" },
+              { text: "To", value: "toLocation" },
+              { text: "From", value: "fromLocation" },
+              { text: "Fee", value: "fee" },
+              { text: "Distance", value: "distance" },
+              { text: "Vehicle", value: "vehicle" },
+              { text: "Drivers", value: "drivers" },
+              { text: "Passengers", value: "passengers" },
+          ],
+              rides: [],
+          };
+          },
+        mounted: async function() {
+          try{
+            let response= await this.$axios.get("/rides");
+            let rideArray=response.data;
+            console.log(rideArray);
+            for (let i = 0; i<rideArray.length; i++){
+              let a_ride = rideArray[i];
+              //Format Date
+              a_ride.date = new Date(a_ride.date).toDateString();
+              //Set Vehicle
+              a_ride.vehicle = a_ride.vehicle.licensenumber;
+              //Set Locations
+              a_ride.toLocation = `${a_ride.toLocation.address} ${a_ride.toLocation.city}, ${a_ride.toLocation.state} ${a_ride.toLocation.zipcode}`;
+              a_ride.fromLocation = `${a_ride.fromLocation.address} ${a_ride.fromLocation.city}, ${a_ride.fromLocation.state} ${a_ride.fromLocation.zipcode}`;
+              //Set Drivers
+              let drivers_array=[];
+              for(let i = 0; i<a_ride.drivers.length; i++){
+                drivers_array.push(`${a_ride.drivers[i].firstname} ${a_ride.drivers[i].lastname}`);
+              }
+              a_ride.drivers=drivers_array;
+              //Set Passengers
+              let passengers_array=[];
+              for(let i = 0; i<a_ride.passengers.length; i++){
+                passengers_array.push(`${a_ride.passengers[i].firstname} ${a_ride.passengers[i].lastname}`);
+              }
+              a_ride.passengers=passengers_array;
+
+              this.rides.push(rideArray[i]);
+            }
+          } catch (e) {
+            console.log(e);
+          }
         },
-      { text: "Time", value: "time" },
-      { text: "To", value: "tolocationid" },
-      { text: "From", value: "fromlocationid" },
-      { text: "Fee", value: "fee" },
-      { text: "Distance", value: "distance" },
-      { text: "Drivers", value: "drivers" },
-      { text: "Passengers", value: "passengers" },
-  ],
-      rides: [],
-  };
-  },
-    mounted: async function() {
-        console.log("about to GET");
-        let response;
-        response = await this.$axios.get("/rides");
-        console.log("GET  happened", response);
-        this.rides = response.data.map((obj) => {
-            // console.log(obj.date.parse());
-            obj.date = new Date(obj.date);
-            return obj;
-        });
-    },
-};
-    //     mounted: async function() {
-    //         // console.log("about to GET");
-    //         let response;
-    //         response = await this.$axios.get("/rides");
-    //         let rideArray=response.data;
-    //         for (let i = 0; i<rideArray.length; i++){
-    //             rideArray[i].tolocationid=await this.$axios.get(`/address/${rideArray[i].tolocationid}`);
-    //             console.log(rideArray[i].tolocationid);
-    //             this.rides.push(rideArray[i]);
-    //             //Get locations
-    //             //Get Drivers
-    //             //     //obj.drivers =
-    //             //     //Get passengers
-    //             //     //obj.passengers =
-    //             //     //Format Date
-    //             //     // console.log(obj.date.parse());
-    //         }
-    //         // this.rides = response.data.map((obj) => {
-    //         //     this.$axios.get(`/address/${obj.fromlocationid}`)
-    //         //         .then((result)=>{
-    //         //             console.log("LOOK HERE");
-    //         //             console.log(result);
-    //         //             obj.fromlocationid = result.data;
-    //         //         })
-    //         //         .catch((err)=> {console.log(`Failed: ${err}`)});
-    //         //     // obj.tolocationid=await this.$axios.get(`/address/${obj.tolocationid}`);
-    //         //
-    //         //     return obj;
-    //         // });
-    //     },
-    // }
+    }
 </script>
+

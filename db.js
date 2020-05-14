@@ -55,7 +55,7 @@ async function init() {
 			method: "GET",
 			path: "/",
 			handler: function( request, h ) {
-				return Vehicle.query().withGraphFetched("vehicleLicenseState");
+				return Ride.query().withGraphFetched("drivers");
 			}
 		},
 		{
@@ -63,10 +63,10 @@ async function init() {
 			method: "GET",
 			path: "/rides",
 			config: {
-				description: "Retrieve all Rides",
+				description: "Retrieve all Rides and related information",
 			},
 			handler: (request, h) => {
-				return Ride.query();
+				return Ride.query().withGraphFetched('[drivers, passengers, vehicle, toLocation, fromLocation]');
 			},
 		},
 		{
@@ -255,6 +255,16 @@ async function init() {
 				const passenger = Passenger.query().findById(request.params.id);
 				return passenger.withGraphFetched("rides");
 			},
+		},
+		{
+			method: "GET",
+			path: "/ride-drivers/{id}",
+			config: {
+				description: "Get all the Drivers for a Ride",
+			},
+			handler: async (request, h)=>{
+				return Ride.query().findById(request.params.id).withGraphFetched("drivers");
+			}
 		},
 	]);
 
