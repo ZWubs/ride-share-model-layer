@@ -6,6 +6,8 @@ import RideReport from "./pages/RideReport";
 import AddVehicle from "./pages/AddVehicle.vue";
 import AddVehicleType from "./pages/AddVehicleType.vue";
 import Authorization from "./pages/Authorization.vue";
+import DriverSignUp from "./pages/DriverSignUp";
+import PassengerRides from "./pages/PassengerRides";
 
 Vue.use(Router);
 
@@ -18,5 +20,7 @@ export default new Router({
     { name: "ride-report-page", path: "/ride-report", component: RideReport},
     { name: "add-vehicle-page", path: "/addvehicle", component: AddVehicle },
     { name: "add-vehicle-type-page", path: "/addvehicletype", component: AddVehicleType },
+    { name: "driver-signup-page", path:"/driver-signup", component:DriverSignUp},
+    { name: "passenger-rides-page", path:"/passenger-rides", component: PassengerRides},
   ]
 });

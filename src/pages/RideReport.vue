@@ -38,14 +38,34 @@
             }
         },
         mounted: async function() {
-            console.log("about to GET");
+            // console.log("about to GET");
             let response;
             response = await this.$axios.get("/rides");
-            console.log(`GET  happened ${response}`);
-            this.rides = response.data.map( (obj) => {
-                console.log(obj.date.parse());
-                return obj;
-            });
+            let rideArray=response.data;
+            for (let i = 0; i<rideArray.length; i++){
+                rideArray[i].tolocationid=await this.$axios.get(`/address/${rideArray[i].tolocationid}`);
+                console.log(rideArray[i].tolocationid);
+                this.rides.push(rideArray[i]);
+                //Get locations
+                //Get Drivers
+                //     //obj.drivers =
+                //     //Get passengers
+                //     //obj.passengers =
+                //     //Format Date
+                //     // console.log(obj.date.parse());
+            }
+            // this.rides = response.data.map((obj) => {
+            //     this.$axios.get(`/address/${obj.fromlocationid}`)
+            //         .then((result)=>{
+            //             console.log("LOOK HERE");
+            //             console.log(result);
+            //             obj.fromlocationid = result.data;
+            //         })
+            //         .catch((err)=> {console.log(`Failed: ${err}`)});
+            //     // obj.tolocationid=await this.$axios.get(`/address/${obj.tolocationid}`);
+            //
+            //     return obj;
+            // });
         },
     }
 </script>

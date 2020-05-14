@@ -65,11 +65,21 @@ async function init() {
 			config: {
 				description: "Retrieve all Rides",
 			},
-			handler: function (request, h) {
+			handler: (request, h) => {
 				return Ride.query();
-			}
+			},
 		},
-
+		{
+			//Returns an array of all Passengers
+			method: "GET",
+			path: "/passengers",
+			config: {
+				description: "Retrieve all Passengers",
+			},
+			handler: (request, h) => {
+				return Passenger.query();
+			},
+		},
 		//
 		{
 			method: "GET",
@@ -220,7 +230,32 @@ async function init() {
 					};
 				}
 			}
-		}
+		},
+		{
+			method: "GET",
+			path: "/address/{id}",
+			config: {
+				description: "Get an address for a location",
+			},
+			handler: async (request, h)=>{
+				let anAddress = await Location.query()
+					.select('address', 'city', 'state', 'zipcode')
+					.where('id', request.params.id)
+					.first();
+				return anAddress;
+			},
+		},
+		{
+			method: "GET",
+			path: `/passenger-rides-list/{id}`,
+			config: {
+				description: "Get the rides a passenger is on",
+			},
+			handler: async (request, h)=>{
+				const passenger = Passenger.query().findById(request.params.id);
+				return passenger.withGraphFetched("rides");
+			},
+		},
 	]);
 
 	console.log("Server listening on", server.info.uri);
