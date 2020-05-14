@@ -43,7 +43,6 @@
           try{
             let response= await this.$axios.get("/rides");
             let rideArray=response.data;
-            console.log(rideArray);
             for (let i = 0; i<rideArray.length; i++){
               let a_ride = rideArray[i];
               //Format Date

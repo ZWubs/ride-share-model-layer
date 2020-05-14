@@ -232,6 +232,54 @@ async function init() {
 			}
 		},
 		{
+			// D2 a Driver up for a ride
+			method: "POST",
+			path: "/driver-signup",
+			config: {
+				description: "Signs a Driver up for a Ride",
+				validate: {
+					payload: Joi.object({
+						firstName: Joi.string().required(),
+						lastName: Joi.string().required(),
+						licensePlate: Joi.string().required(),
+					}),
+				},
+			},
+			handler: async (request, h) => {
+				const driver= await Driver.query()
+					.where({
+						firstname: request.payload.firstName,
+						lastname: request.payload.lastName
+					})
+					.select('id')
+					.first()
+				console.log(driver.id);
+				const vehicle = await Vehicle.query()
+					.where('licensenumber', request.payload.licensePlate)
+					.select('id')
+					.first()
+				console.log(vehicle.id);
+
+				const newAuth = await Authorization.query().insert({
+					driverid: driver.id,
+					vehicleid: vehicle.id
+				});
+				console.log('d');
+
+				if(newAuth){
+					return{
+						ok: true,
+						msge: `${request.payload.firstName} ${request.payload.lastName} is now authorized to drive the vehicle with a license plate of ${request.payload.licensePlate}.`
+					}
+				} else {
+					return{
+						ok: false,
+						msge: `Authorization failed.`
+					};
+				}
+			}
+		},
+		{
 			method: "GET",
 			path: "/address/{id}",
 			config: {
@@ -256,16 +304,7 @@ async function init() {
 				return passenger.withGraphFetched("rides");
 			},
 		},
-		{
-			method: "GET",
-			path: "/ride-drivers/{id}",
-			config: {
-				description: "Get all the Drivers for a Ride",
-			},
-			handler: async (request, h)=>{
-				return Ride.query().findById(request.params.id).withGraphFetched("drivers");
-			}
-		},
+
 	]);
 
 	console.log("Server listening on", server.info.uri);

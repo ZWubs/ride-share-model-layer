@@ -1,11 +1,11 @@
 <template>
     <div class="text-center">
 <!--        <v-menu offset-y>-->
-<!--            <template v-slot:activator="scope">-->
+<!--            <template v-slot:activator="{ on } ">-->
 <!--                <v-btn-->
 <!--                        color="primary"-->
 <!--                        dark-->
-<!--                        v-on="scope.on"-->
+<!--                        v-on="on"-->
 <!--                >-->
 <!--                    Dropdown-->
 <!--                </v-btn>-->
