@@ -4,37 +4,9 @@
             <h2>Driver Signup</h2>
             <instructions details="Select the ride you wish to drive for." />
 
-            <v-form v-model="valid">
-                <v-text-field
-                        v-model = "new_driver.driverFirstName"
-                        v-bind:rules = "rules.required"
-                        type="first name"
-                        label="Driver's First Name"
-                        required
-                >
-                </v-text-field>
-                <v-text-field
-                        v-model = "new_driver.driverLastName"
-                        v-bind:rules = "rules.required"
-                        type="last name"
-                        label="Driver's Last Name"
-                        required
-                >
-                </v-text-field>
-                <v-select
-                        v-model = "new_driver.ride"
-                        :items="ridesList"
-                        v-bind:rules = "rules.required"
-                        item-text="text"
-                        item-value="value"
-                        label="Rides"
-                        required
-                >
-                </v-select>
                 <v-btn v-bind:disabled="!valid" v-on:click="handleSubmit">
                     Sign Up
                 </v-btn>
-            </v-form>
         </div>
 
         <div class="text-xs-center">

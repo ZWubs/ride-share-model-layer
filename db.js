@@ -293,18 +293,6 @@ async function init() {
 				return anAddress;
 			},
 		},
-		{
-			method: "GET",
-			path: `/passenger-rides-list/{id}`,
-			config: {
-				description: "Get the rides a passenger is on",
-			},
-			handler: async (request, h)=>{
-				const passenger = Passenger.query().findById(request.params.id);
-				return passenger.withGraphFetched("rides");
-			},
-		},
-
 	]);
 
 	console.log("Server listening on", server.info.uri);
