@@ -105,7 +105,7 @@ export default {
         { text: 'Last Name', value: 'lastname' },
         { text: 'Phone Number', value: 'phone' },
         { text: 'Status', value: 'status', align: 'center', width: "1%" },
-    { text: 'Account ID', value: 'accountid', align: 'center', width: "1%" },
+    	{ text: 'Account ID', value: 'accountid', align: 'center', width: "1%" },
     ],
 
     };
@@ -176,9 +176,9 @@ export default {
     },
 
     selectAccount(item) {
-    this.selected = item;
-    this.$root.currentAccount = item;
-    console.log( this.$root.currentAccount )
+      this.selected = item;
+      this.$root.currentAccount = item;
+      console.log( this.$root.currentAccount )
     }
 
   },
