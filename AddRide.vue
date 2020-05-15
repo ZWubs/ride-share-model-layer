@@ -208,12 +208,17 @@ export default {
 			if ( i%15 == 0 ) {
 				this.minList.push(d);
 			}
-			if ( i < 32 ) {
-				this.daysList.push(d);
-				if ( i < 25 ) {
+			if ( i < 31 ) {
+				if ( i < 9 ) {
+					var e = "0" + ( i + 1 ).toString();
+				} else {
+					e = ( i + 1 ).toString();
+				}
+				this.daysList.push(e);
+				if ( i < 24 ) {
 					this.hrList.push(d);
-					if ( i < 13 ) {
-						this.monthsList.push(d);
+					if ( i < 12 ) {
+						this.monthsList.push(e);
 					}
 				}
 			}

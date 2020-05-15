@@ -241,14 +241,28 @@ async function init() {
 				description: "Add a new Ride",
 				validate: {
 					payload: Joi.object({
-						type: Joi.string().required()
+						date: Joi.date().required(),
+						time: Joi.string().required(),
+						vehicleId: Joi.number().required(),
+						fuelPrice: Joi.number().required(),
+						fee: Joi.number().required(),
+						distance: Joi.number().required(),
+						fromLocationId: Joi.number().required(),
+						toLocationId: Joi.number().required(),
 					}),
 				},
 			},
 			handler: async ( request, h ) => {
 				console.log( request.payload.type )
+				// let fromLocationId = await Location.query().select('id').where('city', '=', request.payload.city);
 				const newRide = await Ride.query().insert({
-					type: request.payload.type
+					date: request.payload.date,
+					time: request.payload.time,
+					vehicleId: request.payload.vehicleId,
+					fuelPrice: request.payload.fuelPrice,
+					distance: request.payload.distance,
+					fromLocationId: request.payload.fromLocationId,
+					toLocationId: request.payload.toLocationId,
 				});
 				if ( newRide ) {
 					return {
