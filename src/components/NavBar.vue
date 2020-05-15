@@ -15,5 +15,21 @@
     <v-btn v-bind:to="{name: 'add-vehicle-type-page'}">
       Add Vehicle Type
     </v-btn>
+
+    <v-btn v-bind:to="{name: 'add-ride-page'}">
+      Add Ride
+    </v-btn>
+
+    <v-btn v-bind:to="{name: 'update-ride-page'}">
+      Update Ride
+    </v-btn>
+
+    <v-btn v-bind:to="{name: 'ride-signup-page'}">
+      Ride Signup
+    </v-btn>
+
+    <v-btn v-bind:to="{name: 'driver-report-page'}">
+      Driver Reports
+    </v-btn>
   </v-app-bar>
 </template>
