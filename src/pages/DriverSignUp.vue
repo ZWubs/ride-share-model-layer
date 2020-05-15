@@ -3,10 +3,13 @@
         <div>
             <h2>Driver Signup</h2>
             <instructions details="Select the ride you wish to drive for." />
-
-                <v-btn v-bind:disabled="!valid" v-on:click="handleSubmit">
-                    Sign Up
-                </v-btn>
+            <v-data-table
+                    :headers="headers"
+                    :items="ridesList"
+                    :items-per-page="5"
+                    show-select
+                    class="elevation-1"
+            ></v-data-table>
         </div>
 
         <div class="text-xs-center">
@@ -35,21 +38,39 @@
 <script>
     import Instructions from "../components/Instructions.vue";
     export default {
-        name: "AuthorizationPage",
+        name: "DriverSignup",
         components: {
             Instructions
         },
         data: function () {
             return {
                 valid: false,
-
                 new_driver: {
                     driverFirstName: "",
                     driverLastName: "",
                     ride: "",
                     vehicle:"",
                 },
+
+                headers: [
+                    {
+                        text: "Date",
+                        align: "start",
+                        sortable: true,
+                        value: "date",
+                    },
+                    { text: "Time", value: "time" },
+                    { text: "To", value: "toLocation" },
+                    { text: "From", value: "fromLocation" },
+                    { text: "Fee", value: "fee" },
+                    { text: "Distance", value: "distance" },
+                    { text: "Vehicle", value: "vehicle" },
+                    { text: "Drivers", value: "drivers" },
+                    { text: "Passengers", value: "passengers" },
+                ],
+
                 ridesList: [],
+                selected: [],
                 driverSignedUp: false,
 
                 dialogHeader: "<no dialogHeader>",
@@ -62,26 +83,43 @@
             };
         },
 
-        mounted() {
-            this.getRideData();
-        },
-
         methods: {
             getRideData:async function () {
                 //Edit function to take driver and only show vehicles they're authorized for
                 try {
-                    let response = await this.$axios.get("/rides");
-                    let rideArray = response.data;
-                    for (let i = 0; i < rideArray.length; i++) {
-                        let rideDate = new Date(rideArray[i].date).toDateString();
-                        let a_ride = `${rideDate} To: ${rideArray[i].toLocation.address} ${rideArray[i].toLocation.city} ${rideArray[i].toLocation.state} ${rideArray[i].toLocation.zipcode}`;
-                        this.ridesList.push(a_ride);
-                    }
+                    let response= await this.$axios.get("/rides");
+                    let rideArray=response.data;
+                    console.log(rideArray);
+                    for (let i = 0; i<rideArray.length; i++){
+                        let a_ride = rideArray[i];
+                        //Format Date
+                        a_ride.date = new Date(a_ride.date).toDateString();
+                        //Set Vehicle
+                        a_ride.vehicle = a_ride.vehicle.licensenumber;
+                        //Set Locations
+                        a_ride.toLocation = `${a_ride.toLocation.address} ${a_ride.toLocation.city}, ${a_ride.toLocation.state} ${a_ride.toLocation.zipcode}`;
+                        a_ride.fromLocation = `${a_ride.fromLocation.address} ${a_ride.fromLocation.city}, ${a_ride.fromLocation.state} ${a_ride.fromLocation.zipcode}`;
+                        //Set Drivers
+                        let drivers_array=[];
+                        for(let i = 0; i<a_ride.drivers.length; i++){
+                            drivers_array.push(`${a_ride.drivers[i].firstname} ${a_ride.drivers[i].lastname}`);
+                        }
+                        a_ride.drivers=drivers_array;
+                        //Set Passengers
+                        let passengers_array=[];
+                        for(let i = 0; i<a_ride.passengers.length; i++){
+                            passengers_array.push(`${a_ride.passengers[i].firstname} ${a_ride.passengers[i].lastname}`);
+                        }
+                        a_ride.passengers=passengers_array;
+
+                        this.ridesList.push(rideArray[i]);
+                }
                     this.ridesList.sort();
                 } catch (e) {
                     console.log(e);
                 }
             },
+
 
             handleSubmit: function () {
                 this.driverSignedUp = false;
@@ -122,6 +160,10 @@
                     this.$router.push({name: "home-page"});
                 }
             },
-        }
+        },
+
+        mounted() {
+            this.getRideData();
+        },
     }
 </script>
