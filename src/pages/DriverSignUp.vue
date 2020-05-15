@@ -1,3 +1,48 @@
+<!--<template>-->
+<!--  <v-container fluid>-->
+<!--    <v-row align="center">-->
+<!--      <v-col class="d-flex" cols="12" sm="6">-->
+<!--        <v-select-->
+<!--          :items="items"-->
+<!--          label="Standard"-->
+<!--        ></v-select>-->
+<!--      </v-col>-->
+
+<!--      <v-col class="d-flex" cols="12" sm="6">-->
+<!--        <v-select-->
+<!--          :items="items"-->
+<!--          filled-->
+<!--          label="Filled style"-->
+<!--        ></v-select>-->
+<!--      </v-col>-->
+
+<!--      <v-col class="d-flex" cols="12" sm="6">-->
+<!--        <v-select-->
+<!--          :items="items"-->
+<!--          label="Outlined style"-->
+<!--          outlined-->
+<!--        ></v-select>-->
+<!--      </v-col>-->
+
+<!--      <v-col class="d-flex" cols="12" sm="6">-->
+<!--        <v-select-->
+<!--          :items="items"-->
+<!--          label="Solo field"-->
+<!--          solo-->
+<!--        ></v-select>-->
+<!--      </v-col>-->
+<!--    </v-row>-->
+<!--  </v-container>-->
+<!--</template>-->
+
+<!--<script>-->
+<!--  export default {-->
+<!--    data: () => ({-->
+<!--      items: ['Foo', 'Bar', 'Fizz', 'Buzz'],-->
+<!--    }),-->
+<!--  }-->
+<!--</script>-->
+
 <template>
     <v-container>
         <div>
@@ -7,9 +52,11 @@
                     :headers="headers"
                     :items="ridesList"
                     :items-per-page="5"
-                    show-select
                     class="elevation-1"
             ></v-data-table>
+            <v-btn v-on:click="handleSubmit">
+                Sign Up
+            </v-btn>
         </div>
 
         <div class="text-xs-center">
@@ -67,6 +114,7 @@
                     { text: "Vehicle", value: "vehicle" },
                     { text: "Drivers", value: "drivers" },
                     { text: "Passengers", value: "passengers" },
+                    { text: "Select", value: "chooseRide"},
                 ],
 
                 ridesList: [],
@@ -112,7 +160,7 @@
                         }
                         a_ride.passengers=passengers_array;
 
-                        this.ridesList.push(rideArray[i]);
+                        this.ridesList.push(a_ride);
                 }
                     this.ridesList.sort();
                 } catch (e) {
@@ -123,12 +171,13 @@
 
             handleSubmit: function () {
                 this.driverSignedUp = false;
+                console.log(this.selected);
 
                 this.$axios
                     .post("/driver-signup", {
                         firstName: this.new_driver.driverFirstName,
                         lastName: this.new_driver.driverLastName,
-                        ride: this.new_driver.ride
+                        rides: this.selected,
                     })
                     .then((result) => {
                         if (result.data.ok) {

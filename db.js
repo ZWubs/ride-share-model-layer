@@ -71,17 +71,6 @@ async function init() {
 				return Ride.query().withGraphFetched('[drivers, passengers, vehicle, toLocation, fromLocation]');
 			},
 		},
-		{
-			//Returns an array of all Passengers
-			method: "GET",
-			path: "/passengers",
-			config: {
-				description: "Retrieve all Passengers",
-			},
-			handler: (request, h) => {
-				return Passenger.query();
-			},
-		},
 		//
 		{
 			method: "GET",

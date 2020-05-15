@@ -158,7 +158,7 @@ export default {
   methods: {
     // Invoked when the user clicks the "Sign Up" button.
     handleSubmit: function () {
-
+      this.$root.currentAccount;
 
 
     },
