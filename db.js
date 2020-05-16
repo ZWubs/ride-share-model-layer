@@ -22,6 +22,7 @@ const Location = require("./models/Location.js");
 const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
 const Authorization = require("./models/Authorization");
+const RideDriver = require("./models/RideDriver");
 const Administrator = require("./models/Administrator");
 const Accounts = require("./models/Accounts");
 
@@ -263,44 +264,47 @@ async function init() {
 				description: "Signs a Driver up for a Ride",
 				validate: {
 					payload: Joi.object({
-						firstName: Joi.string().required(),
-						lastName: Joi.string().required(),
-						licensePlate: Joi.string().required(),
+						accountId: Joi.number().required(),
+						rideId: Joi.number().required(),
 					}),
 				},
 			},
 			handler: async (request, h) => {
-				const driver= await Driver.query()
-					.where({
-						firstname: request.payload.firstName,
-						lastname: request.payload.lastName
-					})
-					.select('id')
-					.first()
-				console.log(driver.id);
-				const vehicle = await Vehicle.query()
-					.where('licensenumber', request.payload.licensePlate)
-					.select('id')
-					.first()
-				console.log(vehicle.id);
+			    const driverAuths = await Driver.query()
+					.where('accountid', request.payload.accountId)
+					.withGraphFetched("authorizations")
+					.first();
 
-				const newAuth = await Authorization.query().insert({
-					driverid: driver.id,
-					vehicleid: vehicle.id
-				});
-				console.log('d');
+			    const rideInfo= await Ride.query().findById(request.payload.rideId)
+					.withGraphFetched('vehicle');
+			    console.log(driverAuths.authorizations);
 
-				if(newAuth){
-					return{
-						ok: true,
-						msge: `${request.payload.firstName} ${request.payload.lastName} is now authorized to drive the vehicle with a license plate of ${request.payload.licensePlate}.`
+			    for (let i =0; i<driverAuths.authorizations.length;i++){
+			    	if(rideInfo.vehicle.id === driverAuths.authorizations[i].id){
+						const newDriver = await RideDriver.query().insert({
+							driverid: driverAuths.id,
+							rideid: request.payload.rideId,
+						});
+
+						if(newDriver){
+							return{
+								ok: true,
+								msge: `${driverAuths.firstname} ${driverAuths.lastname} is signed up to drive for Ride ${request.payload.rideId}.`
+							}
+						} else {
+							return{
+								ok: false,
+								msge: `Authorization failed.`
+							};
+						}
+
 					}
-				} else {
-					return{
-						ok: false,
-						msge: `Authorization failed.`
-					};
 				}
+				//If driver not auth to vehicle, return error
+			     return{
+					ok: false,
+				 	msge: `You are not authorized to drive Vehicle.`
+				 }
 			}
 		},
 		{
