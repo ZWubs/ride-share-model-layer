@@ -150,9 +150,6 @@ export default {
 				float: [
 					(val) => /[0-9]+.*[0-9]*$/.test(val) || "Invalid number",
 				],
-				licenseplate: [
-					(val) => /^[A-Za-z]{1,3}-[A-Za-z]{1,2}-[0-9]{1,4}$/.test(val) || "Invalid license plate",
-				]
 			},
 		};
 	},
@@ -237,12 +234,6 @@ export default {
 			this.newRide.date = this.newRide.dateYear + "-" + this.newRide.dateMonth + "-" + this.newRide.dateDay;
 			this.newRide.time = this.newRide.timeHr + ":" + this.newRide.timeMin + ":00";
 
-			console.log(this.newRide.date);
-			console.log(this.newRide.time);
-
-			/*this.newRide.date = new Date(this.newRide.date);
-			this.newRide.time = time (HH:mm:ss);*/
-
 			this.$axios.post("/ride", {
 				date: this.newRide.date,
 				time: this.newRide.time,
@@ -263,7 +254,7 @@ export default {
 			})
 
 			.catch((err) => {
-				this.showDialog("Oh dear...", err + ".\n" + "\ndate: " + this.newRide.date + "\ntime: " + this.newRide.time + "\nvehicleId: " + this.newRide.vehicleId + "\nfuelPrice: " + this.newRide.fuelPrice + "\nfee: " + this.newRide.fee + "\ndistance: " + this.newRide.distance + "\nfromLocationId: " + this.newRide.fromLocationId + "\ntoLocationId: " + this.newRide.toLocationId);
+				this.showDialog("Oh dear...", err);
 			})
 		},
 
@@ -275,7 +266,7 @@ export default {
 
 		hideDialog: function() {
 			this.dialogVisible = false;
-			if (this.accountCreated) {
+			if (this.rideCreated) {
 				this.$router.push({ name: "home-page" });
 			}
 		},

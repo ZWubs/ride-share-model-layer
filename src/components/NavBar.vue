@@ -16,19 +16,19 @@
       Add Vehicle Type
     </v-btn>
 
-    <v-btn v-bind:to="{name: 'add-ride-page'}">
+    <v-btn v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'add-ride-page'}">
       Add Ride
     </v-btn>
 
-    <v-btn v-bind:to="{name: 'update-ride-page'}">
+    <v-btn v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'update-ride-page'}">
       Update Ride
     </v-btn>
 
-    <v-btn v-bind:to="{name: 'ride-signup-page'}">
+    <v-btn v-if="isLoggedIn && isPassenger" v-bind:to="{name: 'ride-signup-page'}">
       Ride Signup
     </v-btn>
 
-    <v-btn v-bind:to="{name: 'driver-report-page'}">
+    <v-btn v-if="isLoggedIn && isDriver" v-bind:to="{name: 'driver-report-page'}">
       Driver Reports
     </v-btn>
   </v-app-bar>

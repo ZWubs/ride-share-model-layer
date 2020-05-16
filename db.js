@@ -233,6 +233,19 @@ async function init() {
 			}
 		},
 
+		// Retrieve all existing rides.
+		{
+			method: "GET",
+			path: "/get-rides",
+			config: {
+				description: "Retrieve All Rides in Database"
+			},
+			handler: async ( request, h ) => {
+				return Ride.query();
+			},
+
+		},
+
 		// Add a New Ride
 		{
 			method: "POST",
@@ -241,7 +254,7 @@ async function init() {
 				description: "Add a new Ride",
 				validate: {
 					payload: Joi.object({
-						date: Joi.date().required(),
+						date: Joi.string().required(),
 						time: Joi.string().required(),
 						vehicleId: Joi.number().required(),
 						fuelPrice: Joi.number().required(),
@@ -253,16 +266,17 @@ async function init() {
 				},
 			},
 			handler: async ( request, h ) => {
-				console.log( request.payload.type )
+				console.log( request.payload )
 				// let fromLocationId = await Location.query().select('id').where('city', '=', request.payload.city);
 				const newRide = await Ride.query().insert({
 					date: request.payload.date,
 					time: request.payload.time,
-					vehicleId: request.payload.vehicleId,
-					fuelPrice: request.payload.fuelPrice,
+					vehicleid: request.payload.vehicleId,
+					fuelprice: request.payload.fuelPrice,
+					fee: request.payload.fee,
 					distance: request.payload.distance,
-					fromLocationId: request.payload.fromLocationId,
-					toLocationId: request.payload.toLocationId,
+					fromlocationid: request.payload.fromLocationId,
+					tolocationid: request.payload.toLocationId,
 				});
 				if ( newRide ) {
 					return {
@@ -286,14 +300,30 @@ async function init() {
 				description: "Update an Existing Ride",
 				validate: {
 					payload: Joi.object({
-						type: Joi.string().required()
+						id: Joi.number().required(),
+						date: Joi.string().required(),
+						time: Joi.string().required(),
+						vehicleId: Joi.number().required(),
+						fuelPrice: Joi.number().required(),
+						fee: Joi.number().required(),
+						distance: Joi.number().required(),
+						fromLocationId: Joi.number().required(),
+						toLocationId: Joi.number().required(),
 					}),
 				},
 			},
 			handler: async ( request, h ) => {
-				console.log( request.payload.type )
-				const thisRide = await Ride.query().insert({
-					type: request.payload.type
+				const thisRide = await Ride.query()
+				.where({ id: request.payload.id })
+				.insert({
+					date: request.payload.date,
+					time: request.payload.time,
+					vehicleid: request.payload.vehicleId,
+					fuelprice: request.payload.fuelPrice,
+					fee: request.payload.fee,
+					distance: request.payload.distance,
+					fromlocationid: request.payload.fromLocationId,
+					tolocationid: request.payload.toLocationId,
 				});
 				if ( thisRide ) {
 					return {
