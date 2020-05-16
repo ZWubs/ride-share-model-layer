@@ -73,8 +73,8 @@ class Ride extends Model {
 
 				modelClass: __dirname + "/Location",
 				join: {
-					from: 'location.id',
-					to: 'ride.fromlocationid'
+					from: 'ride.fromlocationid',
+					to: 'location.id'
 				}
 
 			},
@@ -85,8 +85,8 @@ class Ride extends Model {
 
 				modelClass: __dirname + "/Location",
 				join: {
-					from: 'location.id',
-					to: 'ride.tolocationid'
+					from: 'ride.tolocationid',
+					to: 'location.id'
 				}
 
 			},

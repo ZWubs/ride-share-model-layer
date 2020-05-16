@@ -26,6 +26,18 @@ export default new Vuex.Store({
   getters: {
     isLoggedIn(state) {
       return state.currentAccount !== null;
+    },
+    isPassenger(state) {
+      return state.currentAccount.status == "Passenger";
+    },
+    isDriver(state) {
+      return state.currentAccount.status == "Driver";
+    },
+    isAdministrator(state) {
+      return state.currentAccount.status == "Administrator";
+    },
+    accountInitials(state) {
+      if( state.currentAccount !== null ) return state.currentAccount.firstname.charAt(0) + state.currentAccount.lastname.charAt(0);
     }
   },
 

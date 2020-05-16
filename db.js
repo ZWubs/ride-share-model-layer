@@ -22,6 +22,9 @@ const Location = require("./models/Location.js");
 const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
 const Authorization = require("./models/Authorization");
+const RideDriver = require("./models/RideDriver");
+const Administrator = require("./models/Administrator");
+const Accounts = require("./models/Accounts");
 
 // Configure Hapi.
 const Joi = require("@hapi/joi"); // Input validation
@@ -55,10 +58,20 @@ async function init() {
 			method: "GET",
 			path: "/",
 			handler: function( request, h ) {
-				return Vehicle.query().withGraphFetched("vehicleLicenseState");
+				return Ride.query().withGraphFetched("drivers");
 			}
 		},
-
+		{
+			//Returns an array of all Rides
+			method: "GET",
+			path: "/rides",
+			config: {
+				description: "Retrieve all Rides and related information",
+			},
+			handler: (request, h) => {
+				return Ride.query().withGraphFetched('[drivers, passengers, vehicle, toLocation, fromLocation]');
+			},
+		},
 		//
 		{
 			method: "GET",
@@ -80,6 +93,39 @@ async function init() {
 	        },
 	        handler: (request, h) => {
 	          return State.query().select("name");
+	        }
+		},
+
+		{
+			method: "GET",
+	        path: "/passengers",
+	        config: {
+	          description: "Retrieve all passengers",
+	        },
+	        handler: (request, h) => {
+	          return Passenger.query();
+	        }
+		},
+
+		{
+			method: "GET",
+	        path: "/drivers",
+	        config: {
+	          description: "Retrieve all drivers",
+	        },
+	        handler: (request, h) => {
+	          return Driver.query();
+	        }
+		},
+
+		{
+			method: "GET",
+	        path: "/administrators",
+	        config: {
+	          description: "Retrieve all administrators",
+	        },
+	        handler: (request, h) => {
+	          return Administrator.query();
 	        }
 		},
 
@@ -233,6 +279,7 @@ async function init() {
 			}
 		},
 
+
 		// Retrieve all existing rides.
 		{
 			method: "GET",
@@ -338,6 +385,156 @@ async function init() {
 				}
 			},
 		},
+    
+		{
+			// D2 a Driver up for a ride
+			method: "POST",
+			path: "/driver-signup",
+			config: {
+				description: "Signs a Driver up for a Ride",
+				validate: {
+					payload: Joi.object({
+						accountId: Joi.number().required(),
+						rideId: Joi.number().required(),
+					}),
+				},
+			},
+			handler: async (request, h) => {
+			    const driverAuths = await Driver.query()
+					.where('accountid', request.payload.accountId)
+					.withGraphFetched("authorizations")
+					.first();
+
+			    const rideInfo= await Ride.query().findById(request.payload.rideId)
+					.withGraphFetched('vehicle');
+			    console.log(driverAuths.authorizations);
+
+			    for (let i =0; i<driverAuths.authorizations.length;i++){
+			    	if(rideInfo.vehicle.id === driverAuths.authorizations[i].id){
+						const newDriver = await RideDriver.query().insert({
+							driverid: driverAuths.id,
+							rideid: request.payload.rideId,
+						});
+
+						if(newDriver){
+							return{
+								ok: true,
+								msge: `${driverAuths.firstname} ${driverAuths.lastname} is signed up to drive for Ride ${request.payload.rideId}.`
+							}
+						} else {
+							return{
+								ok: false,
+								msge: `Authorization failed.`
+							};
+						}
+
+					}
+				}
+				//If driver not auth to vehicle, return error
+			     return{
+					ok: false,
+				 	msge: `You are not authorized to drive Vehicle.`
+				 }
+			}
+		},
+		{
+			method: "GET",
+			path: "/address/{id}",
+			config: {
+				description: "Get an address for a location",
+			},
+			handler: async (request, h)=>{
+				let anAddress = await Location.query()
+					.select('address', 'city', 'state', 'zipcode')
+					.where('id', request.params.id)
+					.first();
+				return anAddress;
+			},
+		},
+
+		/**
+		 *	Create a passenger account
+		 */
+		{
+			method: "POST",
+			path: "/passenger",
+			config: {
+			  description: "Add a new passenger account",
+			  validate: {
+				payload: Joi.object({
+				  firstname: Joi.string().required(),
+				  lastname: Joi.string().required(),
+				  phone: Joi.string().required(),
+				}),
+			  },
+			},
+			handler: async (request, h) => {
+
+              let account = await Accounts.query().insert({});
+			  let accountID = account.id;
+			  const newPassenger = await Passenger.query().insert({
+				firstname: request.payload.firstname,
+				lastname: request.payload.lastname,
+				phone: request.payload.phone,
+				accountid: accountID
+  	          });
+
+  	          if ( newPassenger ) {
+  	            return {
+  	              ok: true,
+  	              msge: `Successfully created a new passenger account with id: '${accountID}'`,
+  	            };
+  	          } else {
+  	            return {
+  	              ok: false,
+  	              msge: `Couldn"t create a  new passenger account`,
+  	            };
+  	          }
+			},
+		},
+
+		/**
+		 *	Create a driver account
+		 */
+		{
+			method: "POST",
+			path: "/driver",
+			config: {
+			  description: "Add a new driver account",
+			  validate: {
+				payload: Joi.object({
+				  firstname: Joi.string().required(),
+				  lastname: Joi.string().required(),
+				  phone: Joi.string().required(),
+				  licensenumber: Joi.string().required()
+				}),
+			  },
+			},
+			handler: async (request, h) => {
+
+              let account = await Accounts.query().insert({});
+			  let accountID = account.id;
+			  const newDriver = await Driver.query().insert({
+				firstname: request.payload.firstname,
+				lastname: request.payload.lastname,
+				phone: request.payload.phone,
+				licensenumber: request.payload.licensenumber,
+				accountid: accountID
+  	          });
+
+  	          if ( newDriver ) {
+  	            return {
+  	              ok: true,
+  	              msge: `Successfully created a new driver account with id: '${accountID}'`,
+  	            };
+  	          } else {
+  	            return {
+  	              ok: false,
+  	              msge: `Couldn"t create a new driver account`,
+  	            };
+  	          }
+			},
+		}
 	]);
 
 	console.log("Server listening on", server.info.uri);
