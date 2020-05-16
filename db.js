@@ -171,9 +171,31 @@ async function init() {
   	          } else {
   	            return {
   	              ok: false,
-  	              msge: `Couldn"t create vehicle`,
+  	              msge: `Couldn't create vehicle`,
   	            };
   	          }
+			},
+		},
+
+		{
+			method: "GET",
+			path:"/getVehicles",
+			config: {
+				description: "Retrieve a list of all vehicles in the database.",
+			},
+			handler: (request, h) => {
+				return Vehicle.query().select("id");
+			},
+		},
+
+		{
+			method: "GET",
+			path:"/locations",
+			config: {
+				description: "Retrieve a list of all locations in the database.",
+			},
+			handler: (request, h) => {
+				return Location.query().select("id");
 			},
 		},
 
@@ -203,7 +225,7 @@ async function init() {
   	          } else {
   	            return {
   	              ok: false,
-  	              msge: `Couldn"t create vehicle type "${request.payload.type}"`,
+  	              msge: `Couldn't create vehicle type "${request.payload.type}"`,
   	            };
   	          }
 			},
@@ -256,6 +278,114 @@ async function init() {
 				}
 			}
 		},
+
+
+		// Retrieve all existing rides.
+		{
+			method: "GET",
+			path: "/get-rides",
+			config: {
+				description: "Retrieve All Rides in Database"
+			},
+			handler: async ( request, h ) => {
+				return Ride.query();
+			},
+
+		},
+
+		// Add a New Ride
+		{
+			method: "POST",
+			path: "/ride",
+			config: {
+				description: "Add a new Ride",
+				validate: {
+					payload: Joi.object({
+						date: Joi.string().required(),
+						time: Joi.string().required(),
+						vehicleId: Joi.number().required(),
+						fuelPrice: Joi.number().required(),
+						fee: Joi.number().required(),
+						distance: Joi.number().required(),
+						fromLocationId: Joi.number().required(),
+						toLocationId: Joi.number().required(),
+					}),
+				},
+			},
+			handler: async ( request, h ) => {
+				console.log( request.payload )
+				// let fromLocationId = await Location.query().select('id').where('city', '=', request.payload.city);
+				const newRide = await Ride.query().insert({
+					date: request.payload.date,
+					time: request.payload.time,
+					vehicleid: request.payload.vehicleId,
+					fuelprice: request.payload.fuelPrice,
+					fee: request.payload.fee,
+					distance: request.payload.distance,
+					fromlocationid: request.payload.fromLocationId,
+					tolocationid: request.payload.toLocationId,
+				});
+				if ( newRide ) {
+					return {
+						ok: true,
+						msge: `Created new ride.`,
+					};
+				} else {
+					return {
+						ok: false,
+						msge: `Couldn't create new ride!`,
+					};
+				}
+			},
+		},
+
+		// Update an Existing Ride
+		{
+			method: "PUT",
+			path: "/ride",
+			config: {
+				description: "Update an Existing Ride",
+				validate: {
+					payload: Joi.object({
+						id: Joi.number().required(),
+						date: Joi.string().required(),
+						time: Joi.string().required(),
+						vehicleId: Joi.number().required(),
+						fuelPrice: Joi.number().required(),
+						fee: Joi.number().required(),
+						distance: Joi.number().required(),
+						fromLocationId: Joi.number().required(),
+						toLocationId: Joi.number().required(),
+					}),
+				},
+			},
+			handler: async ( request, h ) => {
+				const thisRide = await Ride.query()
+				.where({ id: request.payload.id })
+				.insert({
+					date: request.payload.date,
+					time: request.payload.time,
+					vehicleid: request.payload.vehicleId,
+					fuelprice: request.payload.fuelPrice,
+					fee: request.payload.fee,
+					distance: request.payload.distance,
+					fromlocationid: request.payload.fromLocationId,
+					tolocationid: request.payload.toLocationId,
+				});
+				if ( thisRide ) {
+					return {
+						ok: true,
+						msge: `Ride updated.`,
+					};
+				} else {
+					return {
+						ok: false,
+						msge: `Couldn't update ride!`,
+					};
+				}
+			},
+		},
+    
 		{
 			// D2 a Driver up for a ride
 			method: "POST",
@@ -405,7 +535,6 @@ async function init() {
   	          }
 			},
 		}
-
 	]);
 
 	console.log("Server listening on", server.info.uri);
