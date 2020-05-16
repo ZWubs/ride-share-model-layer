@@ -150,6 +150,7 @@ export default {
       .then((result) => {
         if (result.data.ok) {
           this.showDialog("Success", result.data.msge);
+          this.$store.commit('logIn', values);
           this.accountCreated = true;
         } else {
           this.showDialog("Sorry", result.data.msge);
