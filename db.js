@@ -23,6 +23,7 @@ const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
 const Authorization = require("./models/Authorization");
 const RideDriver = require("./models/RideDriver");
+const RidePassenger = require("./models/RidePassenger");
 const Administrator = require("./models/Administrator");
 const Accounts = require("./models/Accounts");
 
@@ -305,6 +306,43 @@ async function init() {
 					ok: false,
 				 	msge: `You are not authorized to drive Vehicle.`
 				 }
+			}
+		},
+		{
+			// P2 a Passenger up for a ride
+			method: "POST",
+			path: "/passenger-signup",
+			config: {
+				description: "Signs a Driver up for a Ride",
+				validate: {
+					payload: Joi.object({
+						accountId: Joi.number().required(),
+						rideId: Joi.number().required(),
+					}),
+				},
+			},
+			handler: async (request, h) => {
+				const passenger = await Passenger.query()
+					.where('accountid', request.payload.accountId)
+					.withGraphFetched("authorizations")
+					.first();
+
+				const newPassenger = await RidePassenger.query().insert({
+					passengerid: passenger.id,
+					rideid: request.payload.rideId,
+				});
+
+				if (newPassenger) {
+					return {
+						ok: true,
+						msge: `${passenger.firstname} ${passenger.lastname} is signed up for Ride ${request.payload.rideId}.`
+					}
+				} else {
+					return {
+						ok: false,
+						msge: `Sign up failed.`
+					};
+				}
 			}
 		},
 		{

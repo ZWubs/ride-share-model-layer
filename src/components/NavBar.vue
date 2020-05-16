@@ -16,7 +16,15 @@
 			Add Vehicle Type
 		</v-btn>
 
-		<v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'accounts-page'}">
+        <v-btn color="info" v-if="isLoggedIn && isDriver" v-bind:to="{name: 'driver-rides-page'}">
+            Upcoming Rides
+        </v-btn>
+
+        <v-btn color="info" v-if="isLoggedIn && isPassenger" v-bind:to="{name: 'passenger-signup-page'}">
+             Get a Ride
+        </v-btn>
+
+        <v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'accounts-page'}">
 			Accounts
 		</v-btn>
 
