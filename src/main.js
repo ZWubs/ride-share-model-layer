@@ -1,10 +1,6 @@
 import Vue from "vue";
 import vuetify from "./plugins/vuetify";
 
-import * as VeeValidate from 'vee-validate';
-
-Vue.use(VeeValidate);
-
 import router from "./router";
 import store from "./store";
 import axios from "axios";

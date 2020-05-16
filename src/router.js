@@ -18,7 +18,7 @@ export default new Router({
     { name: "add-vehicle-page", path: "/addvehicle", component: AddVehicle },
     { name: "add-vehicle-type-page", path: "/addvehicletype", component: AddVehicleType },
     { name: "authorization-page", path: "/authorization", component: Authorization},
-	{ name: "accounts-page", path: "/accounts", "component": Accounts },
-	{ name: "sign-up-page", path: "/signup", "component": SignUp }
+    { name: "accounts-page", path: "/accounts", "component": Accounts },
+    { name: "sign-up-page", path: "/signup", "component": SignUp }
   ]
 });

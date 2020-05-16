@@ -5,25 +5,6 @@
 
       <p class="body-1">This is our award-winning home page.</p>
 
-      <p>{{ $store.state.currentAccount.firstName }}</p>
     </div>
   </v-container>
 </template>
-
-<script>
-export default {
-  name: "HomePage",
-  data: function () {
-    return {
-      accountName: "",
-	};
-  },
-
-  mounted: async function() {},
-
-  methods: {
-
-  },
-};
-
-</script>
