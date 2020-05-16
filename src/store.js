@@ -37,7 +37,7 @@ export default new Vuex.Store({
       return state.currentAccount.status == "Administrator";
     },
     accountInitials(state) {
-      return state.firstname.charAt(0) + state.lastname.charAt(0);
+      if( state.currentAccount !== null ) return state.currentAccount.firstname.charAt(0) + state.currentAccount.lastname.charAt(0);
     }
   },
 

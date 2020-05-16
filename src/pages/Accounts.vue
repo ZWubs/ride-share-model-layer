@@ -107,7 +107,7 @@ export default {
         { text: 'Status', value: 'status', align: 'center', width: "1%" },
         { text: 'Account ID', value: 'accountid', align: 'center', width: "1%" },
         { text: 'Actions', align: 'center' }
-    ],
+      ],
 
     };
   },

@@ -26,7 +26,7 @@
       <template v-slot:activator="{ on }">
         <v-btn text large v-on="on">
           <v-avatar v-on="on" size="36" color="accent">
-            <span>CJ</span>
+            <span>{{accountInitials}}</span>
           </v-avatar>
           <v-icon dark>mdi-menu-down</v-icon>
         </v-btn>
@@ -53,6 +53,13 @@
 
 <script>
 export default {
+
+  data: function() {
+    return {
+      accountProfile: "AZ"
+    }
+  },
+
   computed: {
     isLoggedIn() {
       return this.$store.getters.isLoggedIn;
@@ -65,6 +72,9 @@ export default {
     },
     isAdministrator() {
       return this.$store.getters.isAdministrator;
+    },
+    accountInitials() {
+      return this.$store.getters.accountInitials;
     }
   },
 
