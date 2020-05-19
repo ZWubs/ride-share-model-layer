@@ -24,18 +24,13 @@
           Update Ride
       </v-btn>
 
-<<<<<<< HEAD
-		<v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'add-vehicle-page'}">
-			Add Vehicle
-		</v-btn>
-=======
       <v-btn color="info" v-if="isLoggedIn && isDriver" v-bind:to="{name: 'driver-signup-page'}">
           Sign and Drive
       </v-btn>
+      
       <v-btn color="info" v-if="isLoggedIn && (isDriver || isAdministrator)" v-bind:to="{name: 'add-vehicle-page'}">
           Add Vehicle
       </v-btn>
->>>>>>> eb2900f2a3469d5c5b3926fd77b287055ad1514b
 
       <v-btn color="info" v-if="isLoggedIn && isDriver" v-bind:to="{name: 'driver-rides-page'}">
           Upcoming Rides
