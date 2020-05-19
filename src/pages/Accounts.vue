@@ -161,9 +161,6 @@ export default {
 
   methods: {
     // Invoked when the user clicks the "Sign Up" button.
-    handleSubmit: function () {
-
-    }
     signInAsUser: function( user ) {
 
       console.log( user );

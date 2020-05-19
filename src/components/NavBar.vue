@@ -8,7 +8,7 @@
 			Authorize
 		</v-btn>
 
-		<v-btn color="info" v-if="isLoggedIn && isAdministrator)" v-bind:to="{name: 'add-vehicle-page'}">
+		<v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'add-vehicle-page'}">
 			Add Vehicle
 		</v-btn>
 
