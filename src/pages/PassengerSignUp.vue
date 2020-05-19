@@ -1,8 +1,8 @@
 <template>
     <v-container>
         <div>
-            <h2>Driver Signup</h2>
-            <instructions details="Select the ride you wish to drive for." />
+            <h2>Passenger Signup</h2>
+            <instructions details="Select a ride." />
             <v-form v-model="valid">
                 <v-select
                         :items="rideIds"
@@ -53,7 +53,7 @@
 <script>
     import Instructions from "../components/Instructions.vue";
     export default {
-        name: "DriverSignup",
+        name: "PassengerSignUp",
         components: {
             Instructions
         },
@@ -81,7 +81,7 @@
                 ride:{},
                 ridesList: [],
                 rideIds:[],
-                driverSignedUp: false,
+                passengerSignedUp: false,
 
                 dialogHeader: "<no dialogHeader>",
                 dialogText: "<no dialogText>",
@@ -124,8 +124,8 @@
 
                         this.rideIds.push(a_ride.id);
                         this.ridesList.push(a_ride);
-                }
-                this.ridesList.sort();
+                    }
+                    this.ridesList.sort();
                 } catch (e) {
                     console.log(e);
                 }
@@ -133,16 +133,16 @@
 
 
             handleSubmit: function () {
-                this.driverSignedUp = false;
+                this.passengerSignedUp = false;
                 this.$axios
-                    .post("/driver-signup", {
+                    .post("/passenger-signup", {
                         accountId: this.$store.getters.accountId,
                         rideId: this.ride,
                     })
                     .then((result) => {
                         if (result.data.ok) {
                             this.showDialog("Success", result.data.msge)
-                            this.driverSignedUp = true;
+                            this.passengerSignedUp = true;
                         } else {
                             this.showDialog("Sorry", result.data.msge);
                         }
@@ -164,7 +164,7 @@
             // From Dr. Tom Nurkkala's Modify Single-Page Assignment
             hideDialog: function () {
                 this.dialogVisible = false;
-                if (this.driverSignedUp) {
+                if (this.passengerSignedUp) {
                     // Only navigate away from the Authorization page if we were successful.
                     this.$router.push({name: "home-page"});
                 }
@@ -174,5 +174,6 @@
         mounted() {
             this.getRideData();
         },
+
     }
 </script>

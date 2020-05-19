@@ -3,35 +3,34 @@
         <div>
             <h4>Authorize a driver to drive a vehicle</h4>
 
-            <v-form v-model="valid">
-                <v-text-field
-                    v-model = "new_auth.driverFirstName"
-                    v-bind:rules = "rules.required"
-                    type="first name"
-                    label="Driver's First Name"
-                    required
-                >
-                </v-text-field>
-                <v-text-field
-                        v-model = "new_auth.driverLastName"
-                        v-bind:rules = "rules.required"
-                        type="last name"
-                        label="Driver's Last Name"
-                        required
-                >
-                </v-text-field>
-                <v-text-field
-                        v-model = "new_auth.licensePlate"
-                        v-bind:rules = "rules.required"
-                        type="license plate"
-                        label="Vehicle License Plate"
-                        required
-                >
-                </v-text-field>
-                <v-btn v-bind:disabled="!valid" v-on:click="handleSubmit">
-                    Authorize
-                </v-btn>
-            </v-form>
+            <v-menu offset-y>
+                <template v-slot:activator="scope">
+                    <v-btn color="primary" dark v-on="scope.on">
+                        Choose a Driver
+                    </v-btn>
+                </template>
+                <v-list>
+                    <v-list-item v-for="(item, index) in driversList" :key="index" @click="driverClicked=item.id">
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
+
+            <v-menu offset-y>
+                <template v-slot:activator="scope">
+                    <v-btn color="primary" dark v-on="scope.on">
+                        Choose a Vehicle
+                    </v-btn>
+                </template>
+                <v-list>
+                    <v-list-item v-for="(item, index) in vehiclesList" :key="index" @click="vehicleClicked=item.id">
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                    </v-list-item>
+                </v-list>
+            </v-menu>
+            <v-btn v-on:click="handleSubmit">
+                Authorize
+            </v-btn>
         </div>
 
         <div class="text-xs-center">
@@ -62,23 +61,16 @@
         name: "AuthorizationPage",
         data: function (){
             return{
-                valid: false,
-
-                new_auth:{
-                    driverFirstName:"",
-                    driverLastName:"",
-                    licensePlate:"",
-                },
-
                 driverAuthorized:false,
+                driversList: [],
+                vehiclesList: [],
+                driverClicked: null,
+                vehicleClicked: null,
 
                 dialogHeader: "<no dialogHeader>",
                 dialogText: "<no dialogText>",
                 dialogVisible: false,
 
-                rules: {
-                    required: [(val) => val.length > 0 || "Required"]
-                },
             };
         },
         methods:{
@@ -87,9 +79,8 @@
 
                 this.$axios
                     .post("/authorization",{
-                        firstName:this.new_auth.driverFirstName,
-                        lastName:this.new_auth.driverLastName,
-                        licensePlate:this.new_auth.licensePlate
+                        driverId:this.driverClicked,
+                        vehicleId:this.vehicleClicked
                     })
                     .then((result) => {
                         if (result.data.ok){
@@ -121,6 +112,21 @@
                     this.$router.push({ name: "home-page" });
                 }
             },
-        }
+        },
+        mounted: async function () {
+            //Retrieve Drivers for Drop Down
+            let response = await this.$axios.get("/drivers");
+            for (let i = 0; i < response.data.length; i++) {
+                let driver = response.data[i];
+                this.driversList.push({title: `${driver.firstname} ${driver.lastname}`, id: driver.id});
+            }
+            response = await this.$axios.get("/getVehicles");
+            for (let i = 0; i < response.data.length; i++) {
+                let vehicle = response.data[i];
+                this.vehiclesList.push({title: `${vehicle.id}`, id: vehicle.id});
+            }
+
+        },
+
     }
 </script>
