@@ -1,60 +1,53 @@
 <template>
   <v-app-bar app dark color="primary">
-    <v-btn v-bind:to="{name: 'home-page'}">
-      Home
-    </v-btn>
+      <v-btn color="info" v-bind:to="{name: 'home-page'}">
+          Home
+      </v-btn>
 
-    <v-btn v-bind:to="{name: 'authorization-page'}">
-      Authorize
-    </v-btn>
+      <v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'authorization-page'}">
+          Authorize
+      </v-btn>
 
-    <v-btn v-bind:to="{name: 'add-vehicle-page'}">
-      Add Vehicle
-    </v-btn>
+      <v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'add-vehicle-type-page'}">
+          Add Vehicle Type
+      </v-btn>
 
-    <v-btn v-bind:to="{name: 'add-vehicle-type-page'}">
-      Add Vehicle Type
-    </v-btn>
+      <v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'ride-report-page'}">
+          View Rides
+      </v-btn>
 
-    <v-btn v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'add-ride-page'}">
-      Add Ride
-    </v-btn>
+      <v-btn color = "info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'add-ride-page'}">
+          Add Ride
+      </v-btn>
 
-    <v-btn v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'update-ride-page'}">
-      Update Ride
-    </v-btn>
+      <v-btn color = "info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'update-ride-page'}">
+          Update Ride
+      </v-btn>
 
-    <v-btn v-if="isLoggedIn && isPassenger" v-bind:to="{name: 'ride-signup-page'}">
-      Ride Signup
-    </v-btn>
+      <v-btn color="info" v-if="isLoggedIn && isDriver" v-bind:to="{name: 'driver-signup-page'}">
+          Sign and Drive
+      </v-btn>
+      <v-btn color="info" v-if="isLoggedIn && (isDriver || isAdministrator)" v-bind:to="{name: 'add-vehicle-page'}">
+          Add Vehicle
+      </v-btn>
 
-    <v-btn v-if="isLoggedIn && isDriver" v-bind:to="{name: 'driver-report-page'}">
-      Driver Reports
-    </v-btn>
-  </v-app-bar>
-=======
-	<v-app-bar app dark color="primary">
-		<v-btn color="info" v-bind:to="{name: 'home-page'}">
-			Home
-		</v-btn>
+      <v-btn color="info" v-if="isLoggedIn && isDriver" v-bind:to="{name: 'driver-rides-page'}">
+          Upcoming Rides
+      </v-btn>
 
-		<v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'authorization-page'}">
-			Authorize
-		</v-btn>
+      <v-btn color="info" v-if="isLoggedIn && isPassenger" v-bind:to="{name: 'passenger-rides-page'}">
+          Upcoming Rides
+      </v-btn>
 
-		<v-btn color="info" v-if="isLoggedIn && (isDriver || isAdministrator)" v-bind:to="{name: 'add-vehicle-page'}">
-			Add Vehicle
-		</v-btn>
+      <v-btn color="info" v-if="isLoggedIn && isPassenger" v-bind:to="{name: 'passenger-signup-page'}">
+          Get a Ride
+      </v-btn>
 
-		<v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'add-vehicle-type-page'}">
-			Add Vehicle Type
-		</v-btn>
+      <v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'accounts-page'}">
+          Accounts
+      </v-btn>
 
-		<v-btn color="info" v-if="isLoggedIn && isAdministrator" v-bind:to="{name: 'accounts-page'}">
-			Accounts
-		</v-btn>
-
-		<v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
     <v-menu v-if="isLoggedIn" offset-y transition="scale-transition">
       <template v-slot:activator="{ on }">
