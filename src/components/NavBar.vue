@@ -27,7 +27,7 @@
       <v-btn color="info" v-if="isLoggedIn && isDriver" v-bind:to="{name: 'driver-signup-page'}">
           Sign and Drive
       </v-btn>
-
+      
       <v-btn color="info" v-if="isLoggedIn && (isDriver || isAdministrator)" v-bind:to="{name: 'add-vehicle-page'}">
           Add Vehicle
       </v-btn>
