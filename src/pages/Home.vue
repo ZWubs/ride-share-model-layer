@@ -5,6 +5,35 @@
 
       <p class="body-1">This is our award-winning home page.</p>
 
+      <v-text-field label="What snack?" v-model="snackText" />
+      <v-btn class="primary" @click="snackBar">Test snack</v-btn>
+
     </div>
   </v-container>
 </template>
+
+<script>
+import { mapMutations } from 'vuex'
+
+export default {
+
+  data () {
+    return { snackText: '' }
+  },
+
+  methods: {
+
+    snackBar: function( ) {
+
+      this.setSnack( this.snackText )
+
+    },
+    ...mapMutations({
+      setSnack: 'setSnack'
+    })
+
+  }
+
+}
+
+</script>

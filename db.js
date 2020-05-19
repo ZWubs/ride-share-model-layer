@@ -72,6 +72,18 @@ async function init() {
 				return Ride.query().withGraphFetched('[drivers, passengers, vehicle, toLocation, fromLocation]');
 			},
 		},
+
+    {
+			//Returns an array of all Vehicles
+			method: "GET",
+			path: "/vehicles",
+			config: {
+				description: "Retrieve all Vehicless and related information",
+			},
+			handler: (request, h) => {
+				return Vehicle.query();
+			},
+		},
 		//
 		{
 			method: "GET",
@@ -131,6 +143,54 @@ async function init() {
 
 		{
 			method: "POST",
+			path: "/vehicle",
+			config: {
+			  description: "Add a new vehicle",
+			  validate: {
+				payload: Joi.object({
+				  make: Joi.string().required(),
+				  model: Joi.string().required(),
+				  color: Joi.string().required(),
+				  type: Joi.string().required(),
+				  capacity: Joi.number().integer().required(),
+				  mpg: Joi.number().required(),
+				  licensestate: Joi.string().required(),
+				  licensenumber: Joi.string().required()
+				}),
+			  },
+			},
+			handler: async (request, h) => {
+
+              let licensestate = await State.query().select('abbreviation').where('name', '=', request.payload.licensestate);
+              let vehicletypeid = await VehicleType.query().select('id').where('type', '=', request.payload.type);
+
+			  const newVehicle = await Vehicle.query().insert({
+				make: request.payload.make,
+				model: request.payload.model,
+				color: request.payload.color,
+				vehicletypeid: vehicletypeid[0].id,
+				capacity: request.payload.capacity,
+				mpg: request.payload.mpg,
+				licensestate: licensestate[0].abbreviation,
+				licensenumber: request.payload.licensenumber
+  	          });
+
+  	          if (newVehicle) {
+  	            return {
+  	              ok: true,
+  	              msge: `Created vehicle`,
+  	            };
+  	          } else {
+  	            return {
+  	              ok: false,
+  	              msge: `Couldn"t create vehicle`,
+  	            };
+  	          }
+			},
+		},
+
+    {
+			method: "PUT",
 			path: "/vehicle",
 			config: {
 			  description: "Add a new vehicle",

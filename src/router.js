@@ -10,6 +10,7 @@ import DriverSignUp from "./pages/DriverSignUp";
 import PassengerRides from "./pages/PassengerRides";
 import Accounts from "./pages/Accounts.vue";
 import SignUp from "./pages/SignUp.vue";
+import EditRideVehicle from "./pages/EditRideVehicle.vue"
 
 Vue.use(Router);
 
@@ -27,5 +28,6 @@ export default new Router({
     { name: "authorization-page", path: "/authorization", component: Authorization},
     { name: "accounts-page", path: "/accounts", "component": Accounts },
     { name: "sign-up-page", path: "/signup", "component": SignUp },
+    { name: "edit-ride-vehicle-page", path: "/edit-ride-vehicle", component: EditRideVehicle }
   ]
 });
