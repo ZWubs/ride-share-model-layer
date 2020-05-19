@@ -163,8 +163,6 @@ export default {
     // Invoked when the user clicks the "Sign Up" button.
     signInAsUser: function( user ) {
 
-      console.log( user );
-
       this.$store.commit("logIn", user);
       this.$router.push({ name: "home-page" });
 

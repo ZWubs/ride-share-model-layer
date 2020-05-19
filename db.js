@@ -73,6 +73,18 @@ async function init() {
 				return Ride.query().withGraphFetched('[drivers, passengers, vehicle, toLocation, fromLocation]');
 			},
 		},
+
+    {
+			//Returns an array of all Vehicles
+			method: "GET",
+			path: "/vehicles",
+			config: {
+				description: "Retrieve all Vehicless and related information",
+			},
+			handler: (request, h) => {
+				return Vehicle.query();
+			},
+		},
 		//
 		{
 			method: "GET",
@@ -372,7 +384,7 @@ async function init() {
 				}
 			},
 		},
-    
+
 		{
 			// D2 a Driver up for a ride
 			method: "POST",
