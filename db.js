@@ -131,6 +131,7 @@ async function init() {
 		},
 
 		{
+// import RideSignup from "./pages/RideSignup.vue";
 			method: "POST",
 			path: "/vehicle",
 			config: {
@@ -246,19 +247,31 @@ async function init() {
 				},
 			},
 			handler: async (request, h) => {
-				const driver= await Driver.query()
-					.where({
-						firstname: request.payload.firstName,
-						lastname: request.payload.lastName
-					})
-					.select('id')
-					.first()
-				console.log(driver.id);
-				const vehicle = await Vehicle.query()
-					.where('licensenumber', request.payload.licensePlate)
-					.select('id')
-					.first()
-				console.log(vehicle.id);
+				try {
+					const driver = await Driver.query()
+						.where({
+							firstname: request.payload.firstName,
+							lastname: request.payload.lastName
+						})
+						.select('id')
+						.first()
+				} catch (e) {
+					return{
+						ok: false,
+						msge: `${request.payload.firstName} ${request.payload.lastName} was not found in database.`
+					}
+				}
+				try {
+					const vehicle = await Vehicle.query()
+						.where('licensenumber', request.payload.licensePlate)
+						.select('id')
+						.first()
+				} catch (e) {
+					return{
+						ok: false,
+						msge: `Vehicle was not found in database.`
+					}
+				}
 
 				const newAuth = await Authorization.query().insert({
 					driverid: driver.id,
@@ -443,7 +456,7 @@ async function init() {
 			method: "POST",
 			path: "/passenger-signup",
 			config: {
-				description: "Signs a Driver up for a Ride",
+				description: "Signs a passenger up for a Ride",
 				validate: {
 					payload: Joi.object({
 						accountId: Joi.number().required(),
@@ -454,7 +467,6 @@ async function init() {
 			handler: async (request, h) => {
 				const passenger = await Passenger.query()
 					.where('accountid', request.payload.accountId)
-					.withGraphFetched("authorizations")
 					.first();
 
 				const newPassenger = await RidePassenger.query().insert({

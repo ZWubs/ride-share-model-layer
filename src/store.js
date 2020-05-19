@@ -38,6 +38,9 @@ export default new Vuex.Store({
     },
     accountInitials(state) {
       if( state.currentAccount !== null ) return state.currentAccount.firstname.charAt(0) + state.currentAccount.lastname.charAt(0);
+    },
+    accountId(state){
+      return state.currentAccount.accountid;
     }
   },
 
