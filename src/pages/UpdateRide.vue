@@ -8,7 +8,7 @@
 			<v-form v-model=valid>
 				<v-select
 					v-model="thisRide.id"
-					:items="idList"
+					:items="rideList"
 					v-on:change="dataEval"
 					label="Ride ID"
 					v-bind:rules="rules.integer">
@@ -91,7 +91,7 @@
 import Instructions from "../components/Instructions.vue";
 
 export default {
-	name:"addRidePage",
+	name:"updateRidePage",
 	components: {
 		Instructions,
 	},
@@ -113,7 +113,7 @@ export default {
 
 			vehiclesList: [],
 			locationsList: [],
-			idList: [],
+			rideList: [],
 
 			rideUpdated:false,
 
@@ -135,7 +135,7 @@ export default {
 
 	mounted: function() {
 		this.$axios.get("/get-rides").then(response => {
-			this.idList = response.data.map( function(obj) {
+			this.rideList = response.data.map( function(obj) {
 				return obj.id;
 			});
 		});
@@ -158,7 +158,7 @@ export default {
 			let oldRide = {};
 			this.$axios.get("/get-rides")
 			.then(response => {
-				for ( let i = 0; i < 3; i++ ) {
+				for ( let i = 0; i < response.data.length; i++ ) {
 					if ( response.data[i].id == this.thisRide.id ) {
 						const oldData = Object.assign(oldRide, response.data[i]);
 						console.log(oldData.id);
@@ -170,20 +170,18 @@ export default {
 						this.thisRide.vehicleId = oldData.vehicleid;
 						this.thisRide.toLocationId = oldData.tolocationid;
 						this.thisRide.fromLocationId = oldData.fromlocationid;
-						console.log(this.thisRide.date);
 					}
 				}
 			});
-			console.log(this.thisRide.date);
 		},
 
 		handleSubmit: function() {
 			this.rideUpdated = false;
 
 			const newTime = this.thisRide.time + ":00";
-			console.log(newTime);
 
-			this.$axios.post("/ride", {
+			this.$axios.put("/ride-update", {
+				id: this.thisRide.id,
 				date: this.thisRide.date,
 				time: newTime,
 				vehicleId: this.thisRide.vehicleId,

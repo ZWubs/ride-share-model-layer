@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <snack-bar />
     <nav-bar />
     <v-content>
       <v-container>
@@ -12,13 +11,11 @@
 
 <script>
 import NavBar from "./components/NavBar.vue";
-import SnackBar from "./components/SnackBar.vue";
 
 export default {
   name: "App",
   components: {
     NavBar,
-    SnackBar
   },
 };
 </script>

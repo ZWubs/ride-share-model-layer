@@ -167,6 +167,7 @@ export default {
   methods: {
     // Invoked when the user clicks the "Sign Up" button.
     handleSubmit: function () {
+
       // Haven"t been successful yet.
       this.vehicleCreated = false;
 
@@ -210,8 +211,7 @@ export default {
         // Only navigate away from the sign-up page if we were successful.
         this.$router.push({ name: "home-page" });
       }
-    }
-
+    },
   },
 };
 

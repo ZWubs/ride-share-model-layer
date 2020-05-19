@@ -3,9 +3,9 @@ const knex = require("knex")({
 	client: "pg",
 	connection: {
 		host: "faraday.cse.taylor.edu", // PostgreSQL server
-	    user: "zachary_winters", // Your user name
-	    password: "kotecove", // Your password
-	    database: "zachary_winters"
+		user: "zachary_winters", // Your user name
+		password: "kotecove", // Your password
+		database: "zachary_winters"
 	}
 });
 
@@ -23,7 +23,6 @@ const State = require("./models/State.js");
 const Passenger = require("./models/Passenger.js");
 const Authorization = require("./models/Authorization");
 const RideDriver = require("./models/RideDriver");
-const RidePassenger = require("./models/RidePassenger");
 const Administrator = require("./models/Administrator");
 const Accounts = require("./models/Accounts");
 
@@ -32,11 +31,11 @@ const Joi = require("@hapi/joi"); // Input validation
 const Hapi = require("@hapi/hapi");
 
 const server = Hapi.server({
-  port: 3000,
-  host: "localhost",
-  routes: {
-    cors: true,
-  },
+	port: 3000,
+	host: "localhost",
+	routes: {
+		cors: true,
+	},
 });
 
 async function init() {
@@ -53,7 +52,7 @@ async function init() {
 
 	/**
 	 *	Handle creating a new vehicle
-	 */
+	*/
 	server.route([
 		{
 			method: "GET",
@@ -73,100 +72,109 @@ async function init() {
 				return Ride.query().withGraphFetched('[drivers, passengers, vehicle, toLocation, fromLocation]');
 			},
 		},
-
-    {
-			//Returns an array of all Vehicles
+		//
+		{
 			method: "GET",
-			path: "/vehicles",
+			path: "/vehicle-types",
 			config: {
-				description: "Retrieve all Vehicless and related information",
+			description: "Retrieve all vehicle types",
 			},
 			handler: (request, h) => {
-				return Vehicle.query();
+			return VehicleType.query().select("type");
+			}
+		},
+
+		{
+			method: "GET",
+			path: "/vehicle-types-raw",
+			config: {
+			description: "Retrieve all data for all vehicle types",
 			},
-		},
-		//
-		{
-			method: "GET",
-	        path: "/vehicle-types",
-	        config: {
-	          description: "Retrieve all vehicle types",
-	        },
-	        handler: (request, h) => {
-	          return VehicleType.query().select("type");
-	        }
+			handler: (request, h) => {
+			return VehicleType.query();
+			}
 		},
 
 		//
 		{
 			method: "GET",
-	        path: "/states",
-	        config: {
-	          description: "Retrieve all states",
-	        },
-	        handler: (request, h) => {
-	          return State.query().select("name");
-	        }
+			path: "/states",
+			config: {
+			description: "Retrieve all states",
+			},
+			handler: (request, h) => {
+			return State.query().select("name");
+			}
 		},
 
 		{
 			method: "GET",
-	        path: "/passengers",
-	        config: {
-	          description: "Retrieve all passengers",
-	        },
-	        handler: (request, h) => {
-	          return Passenger.query();
-	        }
+			path: "/states-abbreviations",
+			config: {
+			description: "Retrieve all states as abbreviations",
+			},
+			handler: (request, h) => {
+			return State.query().select("abbreviation");
+			}
 		},
 
 		{
 			method: "GET",
-	        path: "/drivers",
-	        config: {
-	          description: "Retrieve all drivers",
-	        },
-	        handler: (request, h) => {
-	          return Driver.query();
-	        }
+			path: "/passengers",
+			config: {
+			description: "Retrieve all passengers",
+			},
+			handler: (request, h) => {
+			return Passenger.query();
+			}
 		},
 
 		{
 			method: "GET",
-	        path: "/administrators",
-	        config: {
-	          description: "Retrieve all administrators",
-	        },
-	        handler: (request, h) => {
-	          return Administrator.query();
-	        }
+			path: "/drivers",
+			config: {
+			description: "Retrieve all drivers",
+			},
+			handler: (request, h) => {
+			return Driver.query();
+			}
 		},
 
 		{
-// import RideSignup from "./pages/RideSignup.vue";
+			method: "GET",
+			path: "/administrators",
+			config: {
+			description: "Retrieve all administrators",
+			},
+			handler: (request, h) => {
+			return Administrator.query();
+			}
+		},
+
+		{
 			method: "POST",
 			path: "/vehicle",
 			config: {
-			  description: "Add a new vehicle",
-			  validate: {
-				payload: Joi.object({
-				  make: Joi.string().required(),
-				  model: Joi.string().required(),
-				  color: Joi.string().required(),
-				  type: Joi.string().required(),
-				  capacity: Joi.number().integer().required(),
-				  mpg: Joi.number().required(),
-				  licensestate: Joi.string().required(),
-				  licensenumber: Joi.string().required()
-				}),
-			  },
+				description: "Add a new vehicle",
+				validate: {
+					payload: Joi.object({
+						make: Joi.string().required(),
+						model: Joi.string().required(),
+						color: Joi.string().required(),
+						type: Joi.string().required(),
+						capacity: Joi.number().integer().required(),
+						mpg: Joi.number().required(),
+						licensestate: Joi.string().required(),
+						licensenumber: Joi.string().required()
+					}),
+				},
 			},
 			handler: async (request, h) => {
 
-              let licensestate = await State.query().select('abbreviation').where('name', '=', request.payload.licensestate);
-              let vehicletypeid = await VehicleType.query().select('id').where('type', '=', request.payload.type);
+			let licensestate = await State.query().select('abbreviation').where('name', '=', request.payload.licensestate);
+			let vehicletypeid = await VehicleType.query().select('id').where('type', '=', request.payload.type);
 
-			  const newVehicle = await Vehicle.query().insert({
+			const newVehicle = await Vehicle.query().insert({
 				make: request.payload.make,
 				model: request.payload.model,
 				color: request.payload.color,
@@ -175,19 +183,66 @@ async function init() {
 				mpg: request.payload.mpg,
 				licensestate: licensestate[0].abbreviation,
 				licensenumber: request.payload.licensenumber
-  	          });
+			});
 
-  	          if (newVehicle) {
-  	            return {
-  	              ok: true,
-  	              msge: `Created vehicle`,
-  	            };
-  	          } else {
-  	            return {
-  	              ok: false,
-  	              msge: `Couldn't create vehicle`,
-  	            };
-  	          }
+			if (newVehicle) {
+				return {
+				ok: true,
+				msge: `Created vehicle`,
+				};
+			} else {
+				return {
+				ok: false,
+				msge: `Couldn't create vehicle`,
+				};
+			}
+			},
+		},
+
+		{
+			method: "PUT",
+			path: "/vehicle-update",
+			config: {
+				description: "Update an existing vehicle",
+				validate: {
+					payload: Joi.object({
+						id: Joi.number().required(),
+						make: Joi.string().required(),
+						model: Joi.string().required(),
+						color: Joi.string().required(),
+						type: Joi.number().required(),
+						capacity: Joi.number().required(),
+						mpg: Joi.number().required(),
+						licensestate: Joi.string().required(),
+						licensenumber: Joi.string().required()
+					}),
+				},
+			},
+			handler: async (request, h) => {
+				console.log(request.payload);
+				const thisVehicle = await Vehicle.query()
+				.where({ id: request.payload.id })
+				.patch({
+					make: request.payload.make,
+					model: request.payload.model,
+					color: request.payload.color,
+					vehicletypeid: request.payload.type,
+					capacity: request.payload.capacity,
+					mpg: request.payload.mpg,
+					licensestate: request.payload.licensestate,
+					licensenumber: request.payload.licensenumber,
+				});
+				if (thisVehicle) {
+					return {
+					ok: true,
+					msge: `Updated vehicle`,
+					};
+				} else {
+					return {
+						ok: false,
+						msge: `Couldn't update vehicle`,
+					};
+				}
 			},
 		},
 
@@ -195,10 +250,32 @@ async function init() {
 			method: "GET",
 			path:"/getVehicles",
 			config: {
-				description: "Retrieve a list of all vehicles in the database.",
+				description: "Retrieve a list of all vehicle IDs in the database.",
 			},
 			handler: (request, h) => {
 				return Vehicle.query().select("id");
+			},
+		},
+
+		{
+			method: "GET",
+			path: "/list-vehicles",
+			config: {
+				description: "List all vehicle entries in the database.",
+			},
+			handler: (request, h) => {
+				return Vehicle.query();
+			},
+		},
+
+		{
+			method: "GET",
+			path: "/license-numbers",
+			config: {
+				description: "List all vehicle license plates in the database.",
+			},
+			handler: (request, h) => {
+				return Vehicle.query().select("licensenumber");
 			},
 		},
 
@@ -218,32 +295,33 @@ async function init() {
 			method: "POST",
 			path: "/vehicle-type",
 			config: {
-			  description: "Add a new vehicle type",
-			  validate: {
+			description: "Add a new vehicle type",
+			validate: {
 				payload: Joi.object({
-				  type: Joi.string().required()
+				type: Joi.string().required()
 				}),
-			  },
+			},
 			},
 			handler: async (request, h) => {
 				console.log( request.payload.type )
-			  const newVehicleType = await VehicleType.query().insert({
+			const newVehicleType = await VehicleType.query().insert({
 				type: request.payload.type
-  	          	  });
+				});
 
-  	          if (newVehicleType) {
-  	            return {
-  	              ok: true,
-  	              msge: `Created vehicle type`,
-  	            };
-  	          } else {
-  	            return {
-  	              ok: false,
-  	              msge: `Couldn't create vehicle type "${request.payload.type}"`,
-  	            };
-  	          }
+			if (newVehicleType) {
+				return {
+				ok: true,
+				msge: `Created vehicle type`,
+				};
+			} else {
+				return {
+				ok: false,
+				msge: `Couldn't create vehicle type "${request.payload.type}"`,
+				};
+			}
 			},
 		},
+
 		{
 			//A5: Authorize a driver to a vehicle
 			method: "POST",
@@ -252,23 +330,37 @@ async function init() {
 				description: "Authorize a driver to a Vehicle",
 				validate: {
 					payload: Joi.object({
-						driverId: Joi.number().required(),
-						vehicleId: Joi.number().required(),
+						firstName: Joi.string().required(),
+						lastName: Joi.string().required(),
+						licensePlate: Joi.string().required(),
 					}),
 				},
 			},
 			handler: async (request, h) => {
+				const driver= await Driver.query()
+					.where({
+						firstname: request.payload.firstName,
+						lastname: request.payload.lastName
+					})
+					.select('id')
+					.first()
+				console.log(driver.id);
+				const vehicle = await Vehicle.query()
+					.where('licensenumber', request.payload.licensePlate)
+					.select('id')
+					.first()
+				console.log(vehicle.id);
+
 				const newAuth = await Authorization.query().insert({
-					driverid: request.payload.driverId,
-					vehicleid: request.payload.vehicleId
+					driverid: driver.id,
+					vehicleid: vehicle.id
 				});
-				const driver = await Driver.query().findById(request.payload.driverId).first();
-				const vehicle = await Vehicle.query().findById(request.payload.vehicleId).first();
+				console.log('d');
 
 				if(newAuth){
 					return{
 						ok: true,
-						msge: `${driver.firstname} ${driver.lastname} is now authorized to drive the vehicle with a license plate of ${vehicle.licensenumber}.`
+						msge: `${request.payload.firstName} ${request.payload.lastName} is now authorized to drive the vehicle with a license plate of ${request.payload.licensePlate}.`
 					}
 				} else {
 					return{
@@ -278,6 +370,7 @@ async function init() {
 				}
 			}
 		},
+
 
 		// Retrieve all existing rides.
 		{
@@ -341,7 +434,7 @@ async function init() {
 		// Update an Existing Ride
 		{
 			method: "PUT",
-			path: "/ride",
+			path: "/ride-update",
 			config: {
 				description: "Update an Existing Ride",
 				validate: {
@@ -361,7 +454,7 @@ async function init() {
 			handler: async ( request, h ) => {
 				const thisRide = await Ride.query()
 				.where({ id: request.payload.id })
-				.insert({
+				.patch({
 					date: request.payload.date,
 					time: request.payload.time,
 					vehicleid: request.payload.vehicleId,
@@ -384,7 +477,7 @@ async function init() {
 				}
 			},
 		},
-
+	
 		{
 			// D2 a Driver up for a ride
 			method: "POST",
@@ -399,17 +492,17 @@ async function init() {
 				},
 			},
 			handler: async (request, h) => {
-			    const driverAuths = await Driver.query()
+				const driverAuths = await Driver.query()
 					.where('accountid', request.payload.accountId)
 					.withGraphFetched("authorizations")
 					.first();
 
-			    const rideInfo= await Ride.query().findById(request.payload.rideId)
+				const rideInfo= await Ride.query().findById(request.payload.rideId)
 					.withGraphFetched('vehicle');
-			    console.log(driverAuths.authorizations);
+				console.log(driverAuths.authorizations);
 
-			    for (let i =0; i<driverAuths.authorizations.length;i++){
-			    	if(rideInfo.vehicle.id === driverAuths.authorizations[i].id){
+				for (let i =0; i<driverAuths.authorizations.length;i++){
+					if(rideInfo.vehicle.id === driverAuths.authorizations[i].id){
 						const newDriver = await RideDriver.query().insert({
 							driverid: driverAuths.id,
 							rideid: request.payload.rideId,
@@ -430,45 +523,9 @@ async function init() {
 					}
 				}
 				//If driver not auth to vehicle, return error
-			     return{
+				return{
 					ok: false,
-				 	msge: `You are not authorized to drive Vehicle.`
-				 }
-			}
-		},
-		{
-			// P2 a Passenger up for a ride
-			method: "POST",
-			path: "/passenger-signup",
-			config: {
-				description: "Signs a passenger up for a Ride",
-				validate: {
-					payload: Joi.object({
-						accountId: Joi.number().required(),
-						rideId: Joi.number().required(),
-					}),
-				},
-			},
-			handler: async (request, h) => {
-				const passenger = await Passenger.query()
-					.where('accountid', request.payload.accountId)
-					.first();
-
-				const newPassenger = await RidePassenger.query().insert({
-					passengerid: passenger.id,
-					rideid: request.payload.rideId,
-				});
-
-				if (newPassenger) {
-					return {
-						ok: true,
-						msge: `${passenger.firstname} ${passenger.lastname} is signed up for Ride ${request.payload.rideId}.`
-					}
-				} else {
-					return {
-						ok: false,
-						msge: `Sign up failed.`
-					};
+					msge: `You are not authorized to drive Vehicle.`
 				}
 			}
 		},
@@ -489,85 +546,85 @@ async function init() {
 
 		/**
 		 *	Create a passenger account
-		 */
+		*/
 		{
 			method: "POST",
 			path: "/passenger",
 			config: {
-			  description: "Add a new passenger account",
-			  validate: {
+			description: "Add a new passenger account",
+			validate: {
 				payload: Joi.object({
-				  firstname: Joi.string().required(),
-				  lastname: Joi.string().required(),
-				  phone: Joi.string().required(),
+				firstname: Joi.string().required(),
+				lastname: Joi.string().required(),
+				phone: Joi.string().required(),
 				}),
-			  },
+			},
 			},
 			handler: async (request, h) => {
 
-              let account = await Accounts.query().insert({});
-			  let accountID = account.id;
-			  const newPassenger = await Passenger.query().insert({
+			let account = await Accounts.query().insert({});
+			let accountID = account.id;
+			const newPassenger = await Passenger.query().insert({
 				firstname: request.payload.firstname,
 				lastname: request.payload.lastname,
 				phone: request.payload.phone,
 				accountid: accountID
-  	          });
+			});
 
-  	          if ( newPassenger ) {
-  	            return {
-  	              ok: true,
-  	              msge: `Successfully created a new passenger account with id: '${accountID}'`,
-  	            };
-  	          } else {
-  	            return {
-  	              ok: false,
-  	              msge: `Couldn"t create a  new passenger account`,
-  	            };
-  	          }
+			if ( newPassenger ) {
+				return {
+				ok: true,
+				msge: `Successfully created a new passenger account with id: '${accountID}'`,
+				};
+			} else {
+				return {
+				ok: false,
+				msge: `Couldn"t create a  new passenger account`,
+				};
+			}
 			},
 		},
 
 		/**
 		 *	Create a driver account
-		 */
+		*/
 		{
 			method: "POST",
 			path: "/driver",
 			config: {
-			  description: "Add a new driver account",
-			  validate: {
+			description: "Add a new driver account",
+			validate: {
 				payload: Joi.object({
-				  firstname: Joi.string().required(),
-				  lastname: Joi.string().required(),
-				  phone: Joi.string().required(),
-				  licensenumber: Joi.string().required()
+				firstname: Joi.string().required(),
+				lastname: Joi.string().required(),
+				phone: Joi.string().required(),
+				licensenumber: Joi.string().required()
 				}),
-			  },
+			},
 			},
 			handler: async (request, h) => {
 
-              let account = await Accounts.query().insert({});
-			  let accountID = account.id;
-			  const newDriver = await Driver.query().insert({
+			let account = await Accounts.query().insert({});
+			let accountID = account.id;
+			const newDriver = await Driver.query().insert({
 				firstname: request.payload.firstname,
 				lastname: request.payload.lastname,
 				phone: request.payload.phone,
 				licensenumber: request.payload.licensenumber,
 				accountid: accountID
-  	          });
+			});
 
-  	          if ( newDriver ) {
-  	            return {
-  	              ok: true,
-  	              msge: `Successfully created a new driver account with id: '${accountID}'`,
-  	            };
-  	          } else {
-  	            return {
-  	              ok: false,
-  	              msge: `Couldn"t create a new driver account`,
-  	            };
-  	          }
+			if ( newDriver ) {
+				return {
+				ok: true,
+				msge: `Successfully created a new driver account with id: '${accountID}'`,
+				};
+			} else {
+				return {
+				ok: false,
+				msge: `Couldn"t create a new driver account`,
+				};
+			}
 			},
 		}
 	]);
@@ -578,8 +635,8 @@ async function init() {
 };
 
 process.on("unhandledRejection", (err) => {
-  console.log( err );
-  process.exit(1);
+console.log( err );
+process.exit(1);
 });
 
 init();

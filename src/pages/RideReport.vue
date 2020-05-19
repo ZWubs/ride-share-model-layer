@@ -9,31 +9,7 @@
       :items="rides"
       :items-per-page="5"
       class="elevation-1"
-    >
-      <template v-slot:item="{ item }">
-        <tr>
-          <td>{{ item.date }}</td>
-          <td>{{ item.time }}</td>
-          <td>{{ item.toLocation }}</td>
-          <td>{{ item.fromLocation }}</td>
-          <td>{{ item.fee }}</td>
-          <td>{{ item.distance }}</td>
-          <td>{{ item.vehicle }}</td>
-          <td>{{ item.drivers }}</td>
-          <td>{{ item.passengers }}</td>
-          <td>
-            <v-layout justify-center>
-              <v-btn icon @click="editRideVehicle(item)">
-                <v-icon>mdi-car</v-icon>
-              </v-btn>
-              <v-btn icon @click="addRideVehicle(item)">
-                <v-icon>mdi-car</v-icon>
-              </v-btn>
-            </v-layout>
-          </td>
-        </tr>
-      </template>
-    </v-data-table>
+    ></v-data-table>
   </v-container>
 </template>
 
@@ -44,9 +20,6 @@
           components: { Instructions },
           data() {
             return {
-              addRideVehicleVisible: false,
-              editRideVehicleVisible: false,
-              workingRide: null,
               headers: [
                 {
                   text: "Date",
@@ -54,40 +27,18 @@
                   sortable: true,
                   value: "date",
                 },
-                { text: "Time", value: "time" },
-                { text: "To", value: "toLocation" },
-                { text: "From", value: "fromLocation" },
-                { text: "Fee", value: "fee" },
-                { text: "Distance", value: "distance" },
-                { text: "Vehicle", value: "vehicle" },
-                { text: "Drivers", value: "drivers" },
-                { text: "Passengers", value: "passengers" },
-                { text: "Actions", align: 'center' }
-              ],
+              { text: "Time", value: "time" },
+              { text: "To", value: "toLocation" },
+              { text: "From", value: "fromLocation" },
+              { text: "Fee", value: "fee" },
+              { text: "Distance", value: "distance" },
+              { text: "Vehicle", value: "vehicle" },
+              { text: "Drivers", value: "drivers" },
+              { text: "Passengers", value: "passengers" },
+          ],
               rides: [],
           };
           },
-        methods: {
-
-          addRideVehicle: function( ride ) {
-
-            this.workingRide = ride;
-            this.addRideVehicleVisible = true;
-
-          },
-          hideDialog: function () {
-
-            this.addRideVehicleVisible = false;
-            this.editRideVehicleVisible = false;
-
-          },
-
-          editRideVehicle: function( ride ) {
-            this.$store.commit('changeEdittingVehicle', ride.vehicle );
-            this.$router.push({ name: "edit-ride-vehicle-page" });
-          }
-
-        },
         mounted: async function() {
           try{
             let response= await this.$axios.get("/rides");
@@ -122,3 +73,4 @@
         },
     }
 </script>
+

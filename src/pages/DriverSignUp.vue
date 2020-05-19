@@ -136,7 +136,7 @@
                 this.driverSignedUp = false;
                 this.$axios
                     .post("/driver-signup", {
-                        accountId: this.$store.getters.accountId,
+                        accountId: this.$store.state.currentAccount.accountId,
                         rideId: this.ride,
                     })
                     .then((result) => {
