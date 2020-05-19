@@ -136,7 +136,7 @@
                 this.passengerSignedUp = false;
                 this.$axios
                     .post("/passenger-signup", {
-                        accountId: this.$store.state.currentAccount.accountId,
+                        accountId: this.$store.getters.accountId,
                         rideId: this.ride,
                     })
                     .then((result) => {
@@ -174,5 +174,6 @@
         mounted() {
             this.getRideData();
         },
+
     }
 </script>

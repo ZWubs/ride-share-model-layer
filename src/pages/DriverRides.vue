@@ -5,11 +5,11 @@
         <v-menu offset-y>
             <template v-slot:activator="scope">
                 <v-btn color="primary" dark v-on="scope.on">
-                    Choose a Driver
+                    choose a driver
                 </v-btn>
             </template>
             <v-list>
-                <v-list-item v-for="(item, index) in driversList" :key="index" @click="itemClicked(item.id)">
+                <v-list-item v-for="(item, index) in driverslist" :key="index" @click="itemclicked(item.id)">
                     <v-list-item-title>{{ item.title }}</v-list-item-title>
                 </v-list-item>
             </v-list>
@@ -90,7 +90,7 @@
             },
         },
         mounted: async function () {
-            //Retrieve Passengers for Drop Down
+            //Retrieve Drivers for Drop Down
             let response = await this.$axios.get("/drivers");
             for (let i = 0; i < response.data.length; i++) {
                 let driver = response.data[i];

@@ -73,6 +73,18 @@ async function init() {
 				return Ride.query().withGraphFetched('[drivers, passengers, vehicle, toLocation, fromLocation]');
 			},
 		},
+
+    {
+			//Returns an array of all Vehicles
+			method: "GET",
+			path: "/vehicles",
+			config: {
+				description: "Retrieve all Vehicless and related information",
+			},
+			handler: (request, h) => {
+				return Vehicle.query();
+			},
+		},
 		//
 		{
 			method: "GET",
@@ -131,6 +143,7 @@ async function init() {
 		},
 
 		{
+// import RideSignup from "./pages/RideSignup.vue";
 			method: "POST",
 			path: "/vehicle",
 			config: {
@@ -239,37 +252,23 @@ async function init() {
 				description: "Authorize a driver to a Vehicle",
 				validate: {
 					payload: Joi.object({
-						firstName: Joi.string().required(),
-						lastName: Joi.string().required(),
-						licensePlate: Joi.string().required(),
+						driverId: Joi.number().required(),
+						vehicleId: Joi.number().required(),
 					}),
 				},
 			},
 			handler: async (request, h) => {
-				const driver= await Driver.query()
-					.where({
-						firstname: request.payload.firstName,
-						lastname: request.payload.lastName
-					})
-					.select('id')
-					.first()
-				console.log(driver.id);
-				const vehicle = await Vehicle.query()
-					.where('licensenumber', request.payload.licensePlate)
-					.select('id')
-					.first()
-				console.log(vehicle.id);
-
 				const newAuth = await Authorization.query().insert({
-					driverid: driver.id,
-					vehicleid: vehicle.id
+					driverid: request.payload.driverId,
+					vehicleid: request.payload.vehicleId
 				});
-				console.log('d');
+				const driver = await Driver.query().findById(request.payload.driverId).first();
+				const vehicle = await Vehicle.query().findById(request.payload.vehicleId).first();
 
 				if(newAuth){
 					return{
 						ok: true,
-						msge: `${request.payload.firstName} ${request.payload.lastName} is now authorized to drive the vehicle with a license plate of ${request.payload.licensePlate}.`
+						msge: `${driver.firstname} ${driver.lastname} is now authorized to drive the vehicle with a license plate of ${vehicle.licensenumber}.`
 					}
 				} else {
 					return{
@@ -279,7 +278,6 @@ async function init() {
 				}
 			}
 		},
-
 
 		// Retrieve all existing rides.
 		{
@@ -386,7 +384,7 @@ async function init() {
 				}
 			},
 		},
-    
+
 		{
 			// D2 a Driver up for a ride
 			method: "POST",
@@ -443,7 +441,7 @@ async function init() {
 			method: "POST",
 			path: "/passenger-signup",
 			config: {
-				description: "Signs a Driver up for a Ride",
+				description: "Signs a passenger up for a Ride",
 				validate: {
 					payload: Joi.object({
 						accountId: Joi.number().required(),
@@ -454,7 +452,6 @@ async function init() {
 			handler: async (request, h) => {
 				const passenger = await Passenger.query()
 					.where('accountid', request.payload.accountId)
-					.withGraphFetched("authorizations")
 					.first();
 
 				const newPassenger = await RidePassenger.query().insert({

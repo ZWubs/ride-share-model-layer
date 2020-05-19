@@ -45,27 +45,6 @@
         Sign Up
       </v-btn>
 
-      <div class="text-xs-center">
-        <v-dialog v-model="dialogVisible" width="500">
-          <v-card>
-            <v-card-title primary-title>
-              {{ dialogHeader }}
-            </v-card-title>
-
-            <v-card-text>
-              {{ dialogText }}
-            </v-card-text>
-
-            <v-divider></v-divider>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="primary" text v-on:click="hideDialog">Okay</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </div>
-
     </div>
   </v-container>
 </template>
@@ -73,6 +52,7 @@
 <script>
 
 import Instructions from "../components/Instructions.vue";
+import { mapMutations } from 'vuex';
 
 export default {
   name: "AddVehiclePage",
@@ -95,11 +75,6 @@ export default {
       },
 
       isDriver: false,
-
-      // Data to be displayed by the dialog.
-      dialogHeader: "<no dialogHeader>",
-      dialogText: "<no dialogText>",
-      dialogVisible: false,
 
       // Validation rules for the form fields. This functionality is an extension
       // that"s part of the Vuetify package. Each rule is a list of functions
@@ -148,35 +123,29 @@ export default {
 
       this.$axios.post( address, values )
       .then((result) => {
+        // Based on whether things worked or not, show the
+        // appropriate dialog.
         if (result.data.ok) {
-          this.showDialog("Success", result.data.msge);
+          this.snackBar("Account successfully created");
           this.$store.commit('logIn', values);
-          this.accountCreated = true;
+          this.$router.push({ name: "home-page" });
         } else {
-          this.showDialog("Sorry", result.data.msge);
+          this.snackBar("Account couldn't be created");
         }
       })
-      .catch((err) => this.showDialog("Failed", err));
+      .catch((err) => { this.snackBar("Couldn't contact server"); console.error( err ) });
 
 
     },
 
-    // Helper method to display the dialog box with the appropriate content.
-    showDialog: function (header, text) {
-      this.dialogHeader = header;
-      this.dialogText = text;
-      this.dialogVisible = true;
-    },
+    snackBar: function( text ) {
 
-    // Invoked by the "Okay" button on the dialog; dismiss the dialog
-    // and navigate to the home page.
-    hideDialog: function () {
-      this.dialogVisible = false;
-      if (this.accountCreated) {
-        // Only navigate away from the sign-up page if we were successful.
-        this.$router.push({ name: "home-page" });
-      }
-    }
+      this.setSnack( text );
+
+    },
+    ...mapMutations({
+      setSnack: 'setSnack'
+    })
 
   },
 

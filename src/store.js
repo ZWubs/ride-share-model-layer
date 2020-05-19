@@ -16,7 +16,9 @@ export default new Vuex.Store({
   // Cannot update state directly; use a `mutation` (below).
   // Access in components as `this.$store.state.currentAccount`
   state: {
-    currentAccount: null
+    currentAccount: null,
+    edittingVehicle: null,
+    snackbarText: "",
   },
 
   // A "getter" returns a computed property from the store, similar
@@ -24,6 +26,9 @@ export default new Vuex.Store({
   // Access in components as `this.$store.getters.isLoggedIn`
   // (Not that it behaves like a property -- no parens.)
   getters: {
+    /**
+     *  Account Getters
+     */
     isLoggedIn(state) {
       return state.currentAccount !== null;
     },
@@ -38,6 +43,9 @@ export default new Vuex.Store({
     },
     accountInitials(state) {
       if( state.currentAccount !== null ) return state.currentAccount.firstname.charAt(0) + state.currentAccount.lastname.charAt(0);
+    },
+    accountId(state){
+      return state.currentAccount.accountid;
     }
   },
 
@@ -50,6 +58,12 @@ export default new Vuex.Store({
     },
     logOut(state) {
       state.currentAccount = null;
+    },
+    changeEdittingVehicle( state, vehicle ) {
+      state.edittingVehicle = vehicle
+    },
+    setSnack(state, snack) {
+      state.snackbarText = snack;
     }
   }
 });

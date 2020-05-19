@@ -161,12 +161,7 @@ export default {
 
   methods: {
     // Invoked when the user clicks the "Sign Up" button.
-    handleSubmit: function () {
-
-    },
     signInAsUser: function( user ) {
-
-      console.log( user );
 
       this.$store.commit("logIn", user);
       this.$router.push({ name: "home-page" });

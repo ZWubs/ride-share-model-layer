@@ -1,9 +1,9 @@
 <template>
   <v-container>
     <div>
-      <h4 class="display-1">Add An Account</h4>
+      <h4 class="display-1">Edit A Vehicle</h4>
 
-      <instructions details="Register a new account here." />
+      <instructions details="Edit a vehicle here." />
 
       <v-form v-model="valid">
         <v-text-field
@@ -61,7 +61,7 @@
         ></v-text-field>
 
         <v-btn v-bind:disabled="!valid" v-on:click="handleSubmit">
-          Add Vehicle
+          Update Vehicle
         </v-btn>
 
       </v-form>
@@ -73,10 +73,9 @@
 <script>
 
 import Instructions from "../components/Instructions.vue";
-import { mapMutations } from 'vuex'
 
 export default {
-  name: "AddVehiclePage",
+  name: "EditRideVehiclePage",
   components: {
     Instructions, // Use the Instructions component we just imported
   },
@@ -98,6 +97,7 @@ export default {
 
       vehicleTypeList: [],
       statesList: [],
+
       // Was an account created successfully?
       vehicleCreated: false,
 
@@ -122,20 +122,17 @@ export default {
     };
   },
 
-  mounted: function() {
-    //
-    this.$axios.get("/vehicle-types").then(response => {
-        this.vehicleTypeList = response.data.map( function (obj) {
-          return obj.type.charAt(0).toUpperCase() + obj.type.slice(1);
-        });
-    });
+  computed: {
+    vehicle() {
+      return this.$store.getters.currentEdittingVehicle;
+    },
+  },
 
-    //
-    this.$axios.get("/states").then(response => {
-        this.statesList = response.data.map( function (obj) {
-          return obj.name;
-        });
-    });
+  mounted: function() {
+
+    this.newVehicle = this.vehicle;
+    console.log( this.newVehicle )
+
   },
 
   methods: {
@@ -145,7 +142,7 @@ export default {
       this.vehicleCreated = false;
 
       // Post the content of the form to the Hapi server.
-      this.$axios.post("/vehicle", {
+      this.$axios.put("/vehicle", {
           make: this.newVehicle.make,
           model: this.newVehicle.model,
           color: this.newVehicle.color,
@@ -159,24 +156,15 @@ export default {
         // Based on whether things worked or not, show the
         // appropriate dialog.
         if (result.data.ok) {
-          this.snackBar("Account successfully created");
-        this.accountCreated = true;
+          this.showDialog("Success", result.data.msge);
+          this.vehicleCreated = true;
         } else {
-          this.snackBar("Account couldn't be created");
+          this.showDialog("Sorry", result.data.msge);
         }
       })
-      .catch((err) => this.snackBar("Couldn't contact server"));
+      .catch((err) => this.showDialog("Failed", err));
 
-    },
-
-    snackBar: function( text ) {
-
-      this.setSnack( text );
-
-    },
-    ...mapMutations({
-      setSnack: 'setSnack'
-    })
+    }
 
   },
 };
