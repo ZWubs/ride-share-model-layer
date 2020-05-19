@@ -240,49 +240,23 @@ async function init() {
 				description: "Authorize a driver to a Vehicle",
 				validate: {
 					payload: Joi.object({
-						firstName: Joi.string().required(),
-						lastName: Joi.string().required(),
-						licensePlate: Joi.string().required(),
+						driverId: Joi.number().required(),
+						vehicleId: Joi.number().required(),
 					}),
 				},
 			},
 			handler: async (request, h) => {
-				try {
-					const driver = await Driver.query()
-						.where({
-							firstname: request.payload.firstName,
-							lastname: request.payload.lastName
-						})
-						.select('id')
-						.first()
-				} catch (e) {
-					return{
-						ok: false,
-						msge: `${request.payload.firstName} ${request.payload.lastName} was not found in database.`
-					}
-				}
-				try {
-					const vehicle = await Vehicle.query()
-						.where('licensenumber', request.payload.licensePlate)
-						.select('id')
-						.first()
-				} catch (e) {
-					return{
-						ok: false,
-						msge: `Vehicle was not found in database.`
-					}
-				}
-
 				const newAuth = await Authorization.query().insert({
-					driverid: driver.id,
-					vehicleid: vehicle.id
+					driverid: request.payload.driverId,
+					vehicleid: request.payload.vehicleId
 				});
-				console.log('d');
+				const driver = await Driver.query().findById(request.payload.driverId).first();
+				const vehicle = await Vehicle.query().findById(request.payload.vehicleId).first();
 
 				if(newAuth){
 					return{
 						ok: true,
-						msge: `${request.payload.firstName} ${request.payload.lastName} is now authorized to drive the vehicle with a license plate of ${request.payload.licensePlate}.`
+						msge: `${driver.firstname} ${driver.lastname} is now authorized to drive the vehicle with a license plate of ${vehicle.licensenumber}.`
 					}
 				} else {
 					return{
@@ -292,7 +266,6 @@ async function init() {
 				}
 			}
 		},
-
 
 		// Retrieve all existing rides.
 		{
